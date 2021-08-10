@@ -2,9 +2,7 @@
 
 import functools
 import time
-import logging
 import cProfile
-import sys
 import io
 import pstats
 

@@ -1,5 +1,5 @@
 from multiset import Multiset
-from primes import is_prime
+from EulerLib.primes import is_prime
 
 def multiset_prime_factors(n,primes=None):
     if (primes is None and is_prime(n)) or (primes is not None and n in primes):

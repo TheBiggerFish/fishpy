@@ -1,6 +1,6 @@
 from os import O_TRUNC
 from queue import PriorityQueue
-from typing import Type,List,Dict,Callable,Any
+from typing import List,Dict,Callable,Any
 from EulerLib.geometry import Point
 from EulerLib.structures import Stack
 from enum import Enum
@@ -18,6 +18,9 @@ class Location(Point):
 
     def __str__(self):
         return self.rep
+
+    def __eq__(self,other):
+        return super().__eq__(other) and self.type == other.type and self.rep == other.rep
 
     def is_passible(self):
         return self.type != Location.IMPASSABLE
@@ -51,6 +54,14 @@ class Grid:
         for row in self.grid:
             for col in row:
                 yield col
+
+    def __eq__(self,other):
+        if self.bounds != other.bounds or self._offset != other._offset:
+            return False
+        for pt in self:
+            if self[pt] != other[pt]:
+                return False
+        return True
                 
     def char_positions(self,chars:List[str]) -> Dict[str,List[Point]]:
         map = {}

@@ -1,4 +1,3 @@
-from multiprocessing import Value
 from typing import Any
 from queue import PriorityQueue
 import heapq
@@ -72,7 +71,9 @@ class Range:
         return self.lower > other.lower
     
     def __str__(self):
-        return f'Lower={self.lower},Upper={self.upper}'
+        lchar = '[' if self.lower_inclusive else '('
+        rchar = ']' if self.upper_inclusive else ')'
+        return f'{lchar}{self.lower}-{self.upper}{rchar}'
 
     def __contains__(self,item):
         if self.lower_inclusive:
@@ -85,6 +86,12 @@ class Range:
                 return self.lower < item <= self.upper
             else:
                 return self.lower < item < self.upper
+
+    @staticmethod
+    def from_string(string,lower_inclusive:bool=True,upper_inclusive:bool=False):
+        split = string.split('-')
+        l,r = int(split[0]),int(split[1])
+        return Range(l,r,lower_inclusive,upper_inclusive)
 
     def division(self,parts,which):
         # if self.size() % parts:

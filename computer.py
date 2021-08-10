@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TypeVar,Any,Dict,List,Callable
+from typing import Any,Dict,List,Callable
 
 
 ProgramCounter = int

@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 from random import randint
 from math import cos,sin,pi,atan
 
@@ -40,6 +40,9 @@ class Point:
     def __truediv__(self,scalar:float):
         return Point(self.x/scalar,self.y/scalar)
 
+    def __floordiv__(self,scalar:float):
+        return Point(self.x//scalar,self.y//scalar)
+
     def __mod__(self,divisor):
         return Point(self.x % divisor.x, self.y % divisor.y)
 
@@ -48,6 +51,9 @@ class Point:
 
     def euclidean_distance(self,other) -> float:
         return ((self.x - other.x)**2 + (self.y - other.y)**2)**0.5
+    
+    def midpoint(self,other):
+        return (self + other) / 2
 
     def get_adjacent_points(self,diagonals=False,lower_bound=None,upper_bound=None) -> list:
         adj = [Point(0,1),Point(0,-1),Point(1,0),Point(-1,0)]
@@ -144,10 +150,14 @@ class Vector(Point):
         return self.x*self.y
 
     @staticmethod
-    def from_vel(degree,step):
+    def from_vel(angle,step):
+        return Vector(step*cos(angle),step*sin(angle))
+
+    @staticmethod
+    def from_vel_degree(degree,step):
         rad = degree / 180 * pi
-        return Vector(step*cos(rad),step*sin(rad))
-    
+        return Vector.from_vel(rad,step)
+
     def angle(self) -> float:
         if self.x == 0:
             if self.y == 0:
@@ -160,7 +170,7 @@ import numpy as np
 class LineSegment:
     def __init__(self,p1:Point,p2:Point):
         if p1 == p2:
-            raise ValueError('Points cannot have same value')
+            raise ValueError('Points cannot have same value in a line segment')
         self.p1 = p1
         self.p2 = p2
 
@@ -357,3 +367,105 @@ class Triangle:
     def __contains__(self,pt:Point) -> bool:
         s,t,_ = self.barycentric_coordinates(pt)
         return s > 0 and t > 0 and 1-s-t > 0
+    
+    def as_tuple(self):
+        return tuple(item for pt in (self.p1,self.p2,self.p3) for item in pt.as_tuple())
+
+
+import math
+class Circle:
+    PI = math.pi
+    def __init__(self,center:Point,radius:float):
+        self.center = center
+        self.radius = radius
+    
+    @property
+    def diameter(self):
+        return self.radius * 2
+
+    @property
+    def circumference(self):
+        return self.diameter * Circle.PI
+
+    @property
+    def area(self):
+        return Circle.PI * self.radius ** 2
+
+    def __contains__(self,pt:Point) -> bool:
+        return self.center.euclidean_distance(pt) <= self.radius
+
+    def intersects(self,other) -> bool:
+        d = (self.center - other.center).magnitude()
+        if d == 0:
+            return self.radius == other.radius
+        elif d > self.radius + other.radius:
+            return False
+        elif d < abs(self.radius - other.radius):
+            return False
+        return True
+        
+    # Find intersection points on two arcs: https://stackoverflow.com/questions/47863261/find-point-of-intersection-between-two-arc
+    def intersecting_points(self,other) -> List[Point]:
+        other:Circle = other
+        if self.center == other.center:
+            raise ValueError('Intersecting circles cannot share the same center')
+
+        if not self.intersects(other):
+            return []
+        d = (self.center - other.center).magnitude()
+        a=(self.radius**2-other.radius**2+d**2)/(2*d)
+        h=math.sqrt(self.radius**2-a**2)
+
+        p2 = self.center +  (other.center-self.center) * a/d
+        x3 = round(p2.x + (other.center.y-self.center.y)*h/d,8)
+        y3 = round(p2.y - (other.center.x-self.center.x)*h/d,8)
+        x4 = round(p2.x - (other.center.y-self.center.y)*h/d,8)
+        y4 = round(p2.y + (other.center.x-self.center.x)*h/d,8)
+        return [Point(x3,y3),Point(x4,y4)]
+
+class Ellipse:
+    def __init__(self,focus1:Point,focus2:Point,point_on_ellipse:Point):
+        self.focus1 = focus1
+        self.focus2 = focus2
+        a = focus1.euclidean_distance(point_on_ellipse)
+        b = focus2.euclidean_distance(point_on_ellipse)
+        f = (focus2 - focus1).magnitude()
+        self.minor_axis = ((a+b)**2 - f**2)**0.5
+        self.major_axis = a+b
+        
+        c = (focus1,focus2) if focus1.x < focus2.x else (focus2,focus1)
+        self.angle = Corner(c[0],c[1],c[0]+Point(1,0)).get_angle()
+
+    def center(self) -> Point:
+        return self.focus1.midpoint(self.focus2)
+
+    def __contains__(self,pt:Point) -> bool:
+        c = self.center()
+        angle = self.angle * pi / 180
+        t1 = (cos(angle)*(pt.x-c.x) + sin(angle)*(pt.y-c.y))**2 / (self.major_axis/2)**2
+        t2 = (sin(angle)*(pt.x-c.x) - cos(angle)*(pt.y-c.y))**2 / (self.minor_axis/2)**2
+        return t1 + t2 <= 1
+
+    # Construction of tangent lines from a point outside of an ellipse: http://www.nabla.hr/Z_MemoHU-029.htm
+    def tangent_lines(self,pt:Point) -> List[LineSegment]:
+        if pt in self:
+            raise ValueError('Point within ellipse cannot create tangent lines')
+        # Set f1 as farther focus, f2 as nearer focus
+        if (f1_d := pt.euclidean_distance(self.focus1)) > (f2_d := pt.euclidean_distance(self.focus2)):
+            F1 = self.focus1
+            F2 = self.focus2
+        elif f1_d < f2_d:
+            F1 = self.focus2
+            F2 = self.focus1
+        else:
+            raise NotImplementedError('Point cannot lie on minor axis')
+
+        dist_f2 = pt.euclidean_distance(F2)
+        C1 = Circle(pt,dist_f2)
+        C2 = Circle(F1,self.major_axis)
+        int_pts = C1.intersecting_points(C2)
+        if not int_pts:
+            return None
+        M1 = F2.midpoint(int_pts[0])
+        M2 = F2.midpoint(int_pts[1])
+        return [LineSegment(pt,M1),LineSegment(pt,M2)]
