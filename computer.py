@@ -6,9 +6,19 @@ ProgramCounter = int
 
 
 class Operand(Enum):
-    ANY = 0
     REGISTER = 1
     CONSTANT = 2
+    ADDRESS = 4
+    ANY = 7
+
+    def __or__(self,other:Enum):
+        return self.value | other.value
+    def __ror__(self,other:Enum):
+        return self.__or__(other)
+    def __and__(self,other:int):
+        return self.value & other
+    def __rand__(self,other:int):
+        return self.__and__(other)
 
 class Operation:
     def __init__(self,identifier:Any,function:Callable[[list[str],Dict[str,Any],ProgramCounter],ProgramCounter],operands:List[Operand]):
@@ -17,13 +27,16 @@ class Operation:
         self.operands = operands
 
 class Instruction:
-    def __init__(self,operation:Operation,operands:List[str]):
+    def __init__(self,operation:Operation,arguments:List[str]):
         self.operation = operation
-        self.operands = operands
-        assert(len(operation.operands) == len(operands))
+        self.arguments = arguments
+        assert(len(operation.operands) == len(arguments))
 
     def __call__(self,pc:ProgramCounter,regs:Dict[str,Any]):
-        return self.operation.function(self.operands,regs,pc)
+        return self.operation.function(self.arguments,regs,pc)
+
+    def __str__(self):
+        return f'{self.operation.identifier} {" ".join(self.arguments)}'
 
 class Computer:
     def __init__(self,registers:Dict[str,Any],initial_pc:ProgramCounter=0):
@@ -34,7 +47,14 @@ class Computer:
         self.pc = instruction(self.pc,self.regs)
 
     def execute(self,program:list[Instruction]):
-        if program is None:
-            raise ValueError('Program must be provided to execute')
         while 0 <= self.pc < len(program):
             self.execute_instruction(program[self.pc])
+
+    def execute_with_profiler(self,program:list[Instruction],logging_condition:Callable[[ProgramCounter,Dict[str,Any]],bool]=None) -> Dict[int,int]:
+        profile = {i:0 for i in range(len(program))}
+        while 0 <= self.pc < len(program):
+            profile[self.pc] += 1
+            self.execute_instruction(program[self.pc])
+            if logging_condition is not None and logging_condition(self.pc,self.regs):
+                print(f'Program Counter: {self.pc}, Registers: {self.regs}')
+        print('Program profile:',profile)
