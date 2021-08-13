@@ -1,8 +1,8 @@
-from os import O_TRUNC
 from queue import PriorityQueue
 from typing import List,Dict,Callable,Any
 from EulerLib.geometry import Point
 from EulerLib.structures import Stack
+from EulerLib.physics import Point3D
 from enum import Enum
 
 class Location(Point):
@@ -26,28 +26,28 @@ class Location(Point):
         return self.type != Location.IMPASSABLE
 
 class Grid:
-    def __init__(self,grid:List[List[Location]],offset=Point(0,0)):
+    def __init__(self,grid:List[List[Location]],offset:Point=Point(0,0)):
         self.grid = grid
         self._iter = Point(0,0)
         self._offset = offset
 
     def __getitem__(self,pt:Point) -> Location:
         if not isinstance(pt,Point):
-            raise TypeError('Grid accessor must be of type Point')
+            raise TypeError(f'Grid accessor must be of type Point, type {type(pt)} provided')
         if pt not in self:
             raise KeyError('Point not located on the grid')
         return self.grid[pt.y-self._offset.y][pt.x-self._offset.x]
         
     def __setitem__(self,pt:Point,value) -> None:
         if not isinstance(pt,Point):
-            raise TypeError('Grid accessor must be of type Point')
+            raise TypeError(f'Grid accessor must be of type Point, type {type(pt)} provided')
         if pt not in self:
             raise KeyError('Point not located on the grid')
         self.grid[pt.y-self._offset.y][pt.x-self._offset.x] = value
 
     def __contains__(self,pt:Point) -> bool:
         if not isinstance(pt,Point):
-            raise TypeError('Grid accessor must be of type Point')
+            raise TypeError(f'Grid accessor must be of type Point, type {type(pt)} provided')
         return 0 <= pt.x-self._offset.x < self.width and 0 <= pt.y-self._offset.y < self.height
     
     def __iter__(self):
@@ -75,7 +75,7 @@ class Grid:
         return map
 
     @staticmethod
-    def from_list_of_strings(rows:List[str],wall_char:str='#',offset=Point(0,0)):
+    def from_list_of_strings(rows:List[str],wall_char:str='#',offset:Point=Point(0,0)):
         bounds = Point(len(rows[0]),len(rows))
         grid = Grid.blank(bounds,offset)
         for x in range(bounds.x):
@@ -155,36 +155,46 @@ class Grid:
 
     def __str__(self):
         return self.to_string()
+        
+    @staticmethod
+    def _assert_positive_integer(n:int):
+        if isinstance(n,int) and n > 0:
+            return True
+        raise ValueError('Can only expand with positive integers')
 
-    def expand_up(self,steps,fill_char='.'):
+    def expand_up(self,steps:int,fill_char:str='.'):
+        Grid._assert_positive_integer(steps)
         self._offset.y -= steps
         for y in range(self._offset.y,self._offset.y+steps):
             row = []
             for x in range(self.width):
-                row.append(Location(x,y,Location.OPEN,fill_char))
+                row.append(Location(self._offset.x+x,y,Location.OPEN,fill_char))
             self.grid = [row] + self.grid
 
-    def expand_down(self,steps,fill_char='.'):
+    def expand_down(self,steps:int,fill_char:str='.'):
+        Grid._assert_positive_integer(steps)
         low_y = self._offset.y + self.height
         for y in range(low_y,low_y+steps):
             row = []
             for x in range(self.width):
-                row.append(Location(x,y,Location.OPEN,fill_char))
+                row.append(Location(self._offset.x+x,y,Location.OPEN,fill_char))
             self.grid.append(row)
 
-    def expand_left(self,steps,fill_char='.'):
+    def expand_left(self,steps:int,fill_char:str='.'):
+        Grid._assert_positive_integer(steps)
         self._offset.x -= steps
         for y in range(self.height):
             for x in range(self._offset.x,self._offset.x+steps):
-                self.grid[y] = [Location(x,y,Location.OPEN,fill_char)] + self.grid[y]
+                self.grid[y] = [Location(x,self._offset.y+y,Location.OPEN,fill_char)] + self.grid[y]
 
-    def expand_right(self,steps,fill_char='.'):
+    def expand_right(self,steps:int,fill_char:str='.'):
+        Grid._assert_positive_integer(steps)
         low_x = self._offset.x + self.width
         for y in range(self.height):
             for x in range(low_x,low_x+steps):
-                self.grid[y] = self.grid[y] + [Location(x,y,Location.OPEN,fill_char)]
+                self.grid[y] = self.grid[y] + [Location(x,self._offset.y+y,Location.OPEN,fill_char)]
 
-    def subgrid(self,lower_bound:Point=None,upper_bound:Point=None,reference=False):
+    def subgrid(self,lower_bound:Point=None,upper_bound:Point=None,reference:bool=False):
         if not lower_bound:
             lower_bound = self._offset
         if not upper_bound:
@@ -270,7 +280,6 @@ class Dijkstra:
                         h = DijkstraItem.get_h(adj,self.target,self.heuristic_function)
                         self.q.put(DijkstraItem(adj,g,h))
                         self.prev[adj] = item.value
-                        # print('NEXT:',DijkstraItem(adj,g,h))
         return -1
 
     @property
@@ -326,3 +335,180 @@ class DepthFirstTraversal:
                     if not(self.longest_path and adj == self.target):
                         self.stack.push(adj)
         return self.distance[self.target]
+
+
+class Location3D(Point3D):
+    OPEN = 0
+    IMPASSABLE = 1
+    def __init__(self,x:int,y:int,z:int,type:Enum,rep:str=' '):
+        super().__init__(x,y,z)
+        self.type = type
+        self.rep = rep
+
+    def copy(self):
+        return Location3D(self.x,self.y,self.z,self.type,self.rep[:])
+        
+    def __str__(self):
+        return self.rep
+        
+    def __eq__(self,other):
+        return super().__eq__(other) and self.type == other.type and self.rep == other.rep
+
+
+class Grid3D:
+    def __init__(self,grid=List[List[List[Location3D]]],offset:Point3D=Point3D(0,0,0)):
+        self.grid = [Grid(sub,offset.copy()) for sub in grid]
+        self._iter = Point3D(0,0,0)
+        self._offset = offset
+
+    def __getitem__(self,pt:Point3D) -> Location3D:
+        if not isinstance(pt,Point3D):
+            raise TypeError('Grid accessor must be of type Point3D')
+        if pt not in self:
+            raise KeyError('Point not located on the grid')
+        return self.grid[pt.z-self._offset.z][pt]
+        
+    def __setitem__(self,pt:Point3D,value) -> None:
+        if not isinstance(pt,Point3D):
+            raise TypeError('Grid accessor must be of type Point3D')
+        if pt not in self:
+            raise KeyError('Point not located on the grid')
+        self.grid[pt.z-self._offset.z][pt] = value
+
+    def __contains__(self,pt:Point3D) -> bool:
+        if not isinstance(pt,Point3D):
+            raise TypeError('Grid accessor must be of type Point')
+        return 0 <= pt.x-self._offset.x < self.width and 0 <= pt.y-self._offset.y < self.height and  0 <= pt.z-self._offset.z < self.depth
+
+    def __iter__(self):
+        for subgrid in self.grid:
+            for pt in subgrid:
+                yield pt
+
+    def from_list_of_list_of_strings(rows:List[List[str]],wall_char:str='#',offset:Point3D=Point3D(0,0,0)):
+        bounds = Point3D(len(rows[0][0]),len(rows[0]),len(rows))
+        grid = Grid3D.blank(bounds,offset)
+        for x in range(bounds.x):
+            for y in range(bounds.y):
+                for z in range(bounds.z):
+                    is_wall = Location3D.IMPASSABLE if rows[z][y][x]==wall_char else Location3D.OPEN
+                    loc = Location3D(x+offset.x,y+offset.y,z+offset.z,is_wall,rows[z][y][x])
+                    grid[Point3D(x+offset.x,y+offset.y,z+offset.z)] = loc
+        return grid
+
+    @staticmethod
+    def blank(bounds:Point3D,offset=Point3D(0,0,0)):
+        cube = []
+        for z in range(bounds.z):
+            subgrid = []
+            for y in range(bounds.y):
+                row = []
+                for x in range(bounds.x):
+                    row += [Location3D(x+offset.x,y+offset.y,z+offset.z,Location3D.OPEN,'.')]
+                subgrid += [row]
+            cube += [subgrid]
+        return Grid3D(cube,offset)
+
+    @property
+    def width(self) -> int:
+        return self.grid[0].width
+
+    @property
+    def height(self) -> int:
+        if self.depth == 0:
+            return 0
+        return self.grid[0].height
+
+    @property
+    def depth(self) -> int:
+        return len(self.grid)
+
+    @property
+    def bounds(self) -> Point3D:
+        return Point3D(self.width,self.height,self.depth)
+
+    def __str__(self) -> str:
+        return '\n\n'.join([str(subgrid) for subgrid in self.grid])
+
+    def copy(self):
+        return Grid3D([subgrid.copy().grid for subgrid in self.grid],offset=self._offset.copy())
+
+    @staticmethod
+    def _assert_positive_integer(n:int):
+        if isinstance(n,int) and n > 0:
+            return True
+        raise ValueError('Can only expand with positive integers')
+
+    def expand_up(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        self._offset.y -= steps
+        for z in range(self.depth):
+            self.grid[z]._offset.y -= steps
+            for y in range(self._offset.y,self._offset.y+steps):
+                row = []
+                for x in range(self.width):
+                    row.append(Location3D(self._offset.x+x,y,self._offset.z+z,Location3D.OPEN,fill_char))
+                self.grid[z].grid = [row] + self.grid[z].grid
+
+    def expand_down(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        low_y = self._offset.y + self.height
+        for z in range(self.depth):
+            for y in range(low_y,low_y+steps):
+                row = []
+                for x in range(self.width):
+                    row.append(Location3D(self._offset.x+x,y,self._offset.z+z,Location3D.OPEN,fill_char))
+                self.grid[z].grid.append(row)
+
+    def expand_left(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        self._offset.x -= steps
+        for z in range(self.depth):
+            self.grid[z]._offset.x -= steps
+            for y in range(self.height):
+                for x in range(self._offset.x,self._offset.x+steps):
+                    self.grid[z].grid[y] = [Location3D(x,self._offset.y+y,self._offset.z+z,Location3D.OPEN,fill_char)] + self.grid[z].grid[y]
+
+    def expand_right(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        low_x = self._offset.x + self.width
+        for z in range(self.depth):
+            for y in range(self.height):
+                for x in range(low_x,low_x+steps):
+                    self.grid[z].grid[y] = self.grid[z].grid[y] + [Location3D(x,self._offset.y+y,self._offset.z+z,Location3D.OPEN,fill_char)]
+
+    def expand_in(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        self._offset.z -= steps
+        for z in range(self._offset.z,self._offset.z+steps):
+            new_subgrid = []
+            for y in range(self.height):
+                new_row = []
+                for x in range(self.width):
+                    new_row.append(Location3D(self._offset.x+x,self._offset.y+y,z,Location3D.OPEN,fill_char))
+                new_subgrid.append(new_row)
+            self.grid = [Grid(new_subgrid,self._offset.copy())] + self.grid
+
+    def expand_out(self,steps:int,fill_char:str='.'):
+        Grid3D._assert_positive_integer(steps)
+        low_z = self._offset.z + self.depth
+        for z in range(low_z,low_z+steps):
+            new_subgrid = []
+            for y in range(self.height):
+                new_row = []
+                for x in range(self.width):
+                    new_row.append(Location3D(self._offset.x+x,self._offset.y+y,z,Location3D.OPEN,fill_char))
+                new_subgrid.append(new_row)
+            self.grid.append(Grid(new_subgrid,self._offset.copy()))
+               
+    def char_positions(self,chars:List[str]) -> Dict[str,List[Point]]:
+        map = {}
+        for char in chars:
+            map[char] = []
+        for z in range(self.depth):
+            rcvd = self.grid[z].char_positions(chars)
+            for char in rcvd:
+                for i,pt in enumerate(rcvd[char]):
+                    rcvd[char][i] = Point3D(pt.x,pt.y,self._offset.z+z)
+                map[char] += rcvd[char]
+        return map
