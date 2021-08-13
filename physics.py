@@ -1,4 +1,6 @@
 from EulerLib.geometry import Point, Vector
+from typing import Any, Iterable,Callable
+from itertools import product as cartesian
 
 class Point3D(Point):
     def __init__(self,x:float,y:float,z:float):
@@ -11,10 +13,171 @@ class Point3D(Point):
     def __sub__(self,other):
         return Point3D(self.x-other.x,self.y-other.y,self.z-other.z)
 
+    def __lt__(self,other):
+        return super().__lt__(other) and self.z < other.z
+
+    def __gt__(self,other):
+        return super().__gt__(other) and self.z > other.z
+        
+    def __le__(self,other) -> bool:
+        return super().__le__(other) and self.z <= other.z
+
+    def __eq__(self,other):
+        return super().__eq__(other) and self.z == other.z
+
+    def __str__(self):
+        return f'({self.x},{self.y},{self.z})'
+    
+    def copy(self):
+        return Point3D(self.x,self.y,self.z)
+
+    def get_adjacent_points(self,diagonals:bool=False,lower_bound=None,upper_bound=None) -> list:
+        adj = [Point3D(0,1,0),Point3D(0,-1,0),Point3D(1,0,0),Point3D(-1,0,0),Point3D(0,0,1),Point3D(0,0,-1)]
+        if diagonals:
+            adj += [Point3D(1,1,0),Point3D(-1,-1,0),Point3D(1,-1,0),Point3D(-1,1,0),
+                    Point3D(1,0,1),Point3D(-1,0,-1),Point3D(1,0,-1),Point3D(-1,0,1),
+                    Point3D(0,1,1),Point3D(0,-1,-1),Point3D(0,1,-1),Point3D(0,-1,1)]
+            adj += [Point3D(1,1,1),Point3D(1,1,-1),Point3D(1,-1,1),Point3D(1,-1,-1),
+                    Point3D(-1,1,1),Point3D(-1,1,-1),Point3D(-1,-1,1),Point3D(-1,-1,-1)]
+        adj = [self + p for p in adj]
+        if lower_bound is not None:
+            adj = filter(lambda x: lower_bound <= x, adj)
+        if upper_bound is not None:
+            adj = filter(lambda x: x < upper_bound, adj)
+        return list(adj)
+
 class Vector3D(Vector):
     def __init__(self,x:float,y:float,z:float):
         super().__init__(x,y)
         self.z = z
+
+class PointND:
+    def __init__(self,initial_values:Iterable[float]):
+        self._dim = len(initial_values)
+        if self._dim == 0:
+            raise ValueError('Number of dimensions must be n>=1')
+        self._coords = list(initial_values)
+
+    def __getitem__(self,key) -> float:
+        if isinstance(key,int):
+            if key < 0:
+                raise IndexError('Index out of range')
+            if key >= self._dim:
+                return 0
+            return self._coords[key]
+        elif isinstance(key,slice):
+            return self._coords[key]
+        else:
+            raise TypeError('PointND accessor must be an integer')
+
+    def __setitem__(self,index:int,value:float):
+        if not isinstance(index,int):
+            raise TypeError('PointND accessor must be an integer')
+        if index < 0 or index >= self._dim:
+            raise IndexError('Index out of range')
+        self._coords[index] = value
+
+    @staticmethod
+    def zeros(dimensions:int):
+        return PointND([0]*dimensions)
+
+    def copy(self):
+        return PointND(self._coords[:])
+
+    def __add__(self,other):
+        steps = self._dim if self._dim >= other._dim else other._dim
+        result = []
+        for i in range(steps):
+            result.append(self[i]+other[i])
+        return PointND(result)
+
+    def __str__(self) -> str:
+        return str(tuple(self._coords))
+
+    def __iter__(self):
+        for c in self._coords:
+            yield c
+
+    def __eq__(self,other) -> bool:
+        larger = other if self._dim < other._dim else self
+        smaller = self if self._dim < other._dim else other
+        diff = larger.dim - smaller.dim
+        if larger[-diff:] != [0]*diff:
+            return False
+        for dim in range(larger.dim-diff):
+            if larger[dim] != smaller[dim]:
+                return False
+        return True
+
+    def __le__(self,other) -> bool:
+        larger = other._dim if self._dim < other._dim else self._dim
+        for dim in range(larger):
+            if self[dim] > other[dim]:
+                return False
+        return True
+
+    def __lt__(self,other) -> bool:
+        larger = other._dim if self._dim < other._dim else self._dim
+        for dim in range(larger):
+            if self[dim] >= other[dim]:
+                return False
+        return True
+
+    @property
+    def dim(self) -> int:
+        return self._dim
+
+    def _assert_dimension(self,dim:int,coord:str):
+        if self._dim < dim:
+            raise IndexError(f'{self._dim} dimensional points do not have a <{coord}> coordinate, required dim >= {dim}')
+
+    def get_adjacent_points(self,filter_function:Callable[[Any],bool]=None) -> list:
+        self_rel = tuple([0]*self._dim)
+        adj = list(cartesian([-1,0,1],repeat=self._dim))
+        adj = [PointND(pt)+self for pt in adj if pt != self_rel]
+        if filter_function is not None:
+            adj = filter(filter_function,adj)
+        return list(adj)
+
+    @property
+    def x(self):
+        self._assert_dimension(1,'x')
+        return self._coords[0]
+    
+    @x.setter
+    def x(self,value:float):
+        self._assert_dimension(1,'x')
+        self._coords[0] = value
+
+    @property
+    def y(self):
+        self._assert_dimension(2,'y')
+        return self._coords[1]
+    
+    @y.setter
+    def y(self,value:float):
+        self._assert_dimension(2,'y')
+        self._coords[1] = value
+        
+    @property
+    def z(self):
+        self._assert_dimension(3,'z')
+        return self._coords[2]
+    
+    @z.setter
+    def z(self,value:float):
+        self._assert_dimension(3,'z')
+        self._coords[2] = value
+
+    @property
+    def w(self):
+        self._assert_dimension(4,'w')
+        return self._coords[3]
+    
+    @w.setter
+    def w(self,value:float):
+        self._assert_dimension(4,'w')
+        self._coords[3] = value
 
 class PhysicsObject:
     def __init__(self,position:Point=Point(0,0),velocity:Vector=Vector(0,0),acceleration:Vector=Vector(0,0),update_position_first=True):
