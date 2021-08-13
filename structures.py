@@ -165,9 +165,41 @@ class Node:
             cur = cur.parent
         return cur
 
+    def add_child(self,child):
+        self.children.append(child)
+
+    def __hash__(self):
+        return hash(self.name)
+
+class LinkedList(Node):
+    def __init__(self,value,name:str='',next=None,prev=None):
+        super().__init__(value,name,children=[next],parent=prev)
+    
+    @property
+    def prev(self):
+        return self.parent
+
+    @prev.setter
+    def prev(self,value):
+        self.parent = value
+    
+    @property
+    def next(self):
+        return self.children[0]
+
+    @next.setter
+    def next(self,value):
+        self.children[0] = value
+
+    def __str__(self):
+        return f'{self.name}: {self.value}'
+
 class Cycle(list):
     def __getitem__(self,key:int):
         return super().__getitem__(key%len(self))
 
     def __setitem__(self,key:int,value:Any):
         super().__setitem__(key%len(self),value)
+    
+    def remove(self,index):
+        del self[index]
