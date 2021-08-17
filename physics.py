@@ -1,4 +1,4 @@
-from EulerLib.geometry import Point, Vector
+from fishpy.geometry import Point, Vector
 from typing import Any, Iterable,Callable
 from itertools import product as cartesian
 
@@ -93,6 +93,9 @@ class PointND:
 
     def __str__(self) -> str:
         return str(tuple(self._coords))
+        
+    def __repr__(self) -> str:
+        return f'Point{str(self)}'
 
     def __iter__(self):
         for c in self._coords:
