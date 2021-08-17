@@ -1,5 +1,5 @@
-from typing import Callable
-from EulerLib.structures import Node
+from typing import Callable, List
+from fishpy.structures import Node
 
 
 class Operation:
@@ -40,7 +40,7 @@ PEMDAS = [OrderedOperation(PARENTHESES,3),
 
 
 class Expression(Node):
-    def __init__(self,exp:str,order_of_operations:list[OrderedOperation]=PEMDAS):
+    def __init__(self,exp:str,order_of_operations:List[OrderedOperation]=PEMDAS):
         super().__init__(None,'',[])
         self._order_of_operations = order_of_operations
         self._str_exp = ''.join(exp.split())

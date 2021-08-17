@@ -1,8 +1,8 @@
 from queue import PriorityQueue
 from typing import List,Dict,Callable,Any
-from EulerLib.geometry import Point
-from EulerLib.structures import Stack
-from EulerLib.physics import Point3D
+from fishpy.geometry import Point
+from fishpy.structures import Stack
+from fishpy.physics import Point3D
 from enum import Enum
 
 class Location(Point):
