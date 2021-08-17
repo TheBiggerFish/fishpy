@@ -1,5 +1,6 @@
 from typing import Any
 from queue import PriorityQueue
+from enum import Enum
 import heapq
 
 class Reverse:
@@ -203,3 +204,17 @@ class Cycle(list):
     
     def remove(self,index):
         del self[index]
+
+
+class Enum(Enum):
+    def __or__(self,other:Enum):
+        return self.value | other.value
+    def __ror__(self,other:Enum):
+        return self.__or__(other)
+    def __and__(self,other:int):
+        val = self.value & other
+        if val in type(self)._value2member_map_:
+            return type(self)(val)
+        return val
+    def __rand__(self,other:int):
+        return self.__and__(other)
