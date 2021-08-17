@@ -34,6 +34,9 @@ class Point:
     def __str__(self) -> str:
         return '(' + str(self.x) + ',' + str(self.y) + ')'
 
+    def __repr__(self) -> str:
+        return f'Point{str(self)}'
+
     def __mul__(self,scalar:float):
         return Point(self.x*scalar,self.y*scalar)
 
