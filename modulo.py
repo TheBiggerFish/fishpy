@@ -1,3 +1,4 @@
+from typing import List
 from sympy.ntheory.factor_ import totient
 from math import prod 
 
@@ -8,7 +9,7 @@ def modular_inverse(n:int,base:int) -> int:
     return n
 
 # https://crypto.stanford.edu/pbc/notes/numbertheory/crt.html
-def chinese_remainder_theorem(a:list[int],m:list[int]) -> int:
+def chinese_remainder_theorem(a:List[int],m:List[int]) -> int:
     assert len(a) == len(m)
 
     M = prod(m)
