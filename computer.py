@@ -1,9 +1,7 @@
-from enum import Enum
 from typing import Any,Dict,List,Callable
-
+from fishpy.structures import Enum
 
 ProgramCounter = int
-
 
 class Operand(Enum):
     REGISTER = 1
@@ -11,17 +9,8 @@ class Operand(Enum):
     ADDRESS = 4
     ANY = 7
 
-    def __or__(self,other:Enum):
-        return self.value | other.value
-    def __ror__(self,other:Enum):
-        return self.__or__(other)
-    def __and__(self,other:int):
-        return self.value & other
-    def __rand__(self,other:int):
-        return self.__and__(other)
-
 class Operation:
-    def __init__(self,identifier:Any,function:Callable[[list[str],Dict[str,Any],ProgramCounter],ProgramCounter],operands:List[Operand]):
+    def __init__(self,identifier:Any,function:Callable[[List[str],Dict[str,Any],ProgramCounter],ProgramCounter],operands:List[Operand]):
         self.identifier = identifier
         self.function = function
         self.operands = operands
@@ -46,11 +35,11 @@ class Computer:
     def execute_instruction(self,instruction:Instruction):
         self.pc = instruction(self.pc,self.regs)
 
-    def execute(self,program:list[Instruction]):
+    def execute(self,program:List[Instruction]):
         while 0 <= self.pc < len(program):
             self.execute_instruction(program[self.pc])
 
-    def execute_with_profiler(self,program:list[Instruction],logging_condition:Callable[[ProgramCounter,Dict[str,Any]],bool]=None) -> Dict[int,int]:
+    def execute_with_profiler(self,program:List[Instruction],logging_condition:Callable[[ProgramCounter,Dict[str,Any]],bool]=None) -> Dict[int,int]:
         profile = {i:0 for i in range(len(program))}
         while 0 <= self.pc < len(program):
             profile[self.pc] += 1
