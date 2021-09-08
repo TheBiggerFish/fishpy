@@ -36,8 +36,8 @@ def timer(func):
         result = func(*args, **kwargs)
         duration = round(time.time() - start,6)
 
-        print(f"Duration of {func.__name__} function was {duration}")
-        # logger.debug(f"Duration of {func.__name__} function was {duration}")
+        print(f'Duration of {func.__name__} function was {duration}')
+        # logger.debug(f'Duration of {func.__name__} function was {duration}')
         return result
     return wrapper
 
@@ -45,7 +45,7 @@ def profile(func):
     """ Profile the execution of a method """
 
     def wrapper(*args, **kwargs):
-        # datafn = func.__name__ + ".profile" # Name the data file sensibly
+        # datafn = func.__name__ + '.profile' # Name the data file sensibly
         prof = cProfile.Profile()
         prof.enable()
         retval = func(*args,**kwargs)
