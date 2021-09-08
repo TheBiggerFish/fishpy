@@ -1,34 +1,35 @@
-from typing import Tuple, List
+from typing import Final, Optional, Set, Tuple, List, Union
 from random import randint
-from math import cos,sin,pi,atan
+from math import cos,sin,pi,atan,acos,isclose
+import numpy as np
 
 class Point:
     def __init__(self,x:float,y:float):
         self.x = x
         self.y = y
 
-    def __add__(self,other):
+    def __add__(self,other:'Point') -> 'Point':
         return Point(self.x+other.x,self.y+other.y)
         
-    def __sub__(self,other):
-        return Vector(self.x-other.x,self.y-other.y)
+    def __sub__(self,other:'Point') -> 'Point':
+        return Point(self.x-other.x,self.y-other.y)
 
-    def __neg__(self):
+    def __neg__(self) -> 'Point':
         return Point(-self.x,-self.y)
 
-    def __eq__(self,other) -> bool:
+    def __eq__(self,other:'Point') -> bool:
         return self.x == other.x and self.y == other.y
 
     def __hash__(self) -> int:
         return hash(str(self.x * (10**10) + self.y))
 
-    def __lt__(self,other) -> bool:
+    def __lt__(self,other:'Point') -> bool:
         return self.y < other.y and self.x < other.x
 
-    def __gt__(self,other) -> bool:
+    def __gt__(self,other:'Point') -> bool:
         return not self < other and not self == other
 
-    def __le__(self,other) -> bool:
+    def __le__(self,other:'Point') -> bool:
         return self.y <= other.y and self.x <= other.x
 
     def __str__(self) -> str:
@@ -37,28 +38,28 @@ class Point:
     def __repr__(self) -> str:
         return f'Point{str(self)}'
 
-    def __mul__(self,scalar:float):
+    def __mul__(self,scalar:float) -> 'Point':
         return Point(self.x*scalar,self.y*scalar)
 
-    def __truediv__(self,scalar:float):
+    def __truediv__(self,scalar:float) -> 'Point':
         return Point(self.x/scalar,self.y/scalar)
 
-    def __floordiv__(self,scalar:float):
+    def __floordiv__(self,scalar:float) -> 'Point':
         return Point(self.x//scalar,self.y//scalar)
 
-    def __mod__(self,divisor):
+    def __mod__(self,divisor:'Point') -> 'Point':
         return Point(self.x % divisor.x, self.y % divisor.y)
 
-    def manhattan_distance(self,other) -> float:
+    def manhattan_distance(self,other:'Point') -> float:
         return abs(self.x - other.x) + abs(self.y - other.y)
 
-    def euclidean_distance(self,other) -> float:
+    def euclidean_distance(self,other:'Point') -> float:
         return ((self.x - other.x)**2 + (self.y - other.y)**2)**0.5
     
-    def midpoint(self,other):
+    def midpoint(self,other:'Point') -> 'Point':
         return (self + other) / 2
 
-    def get_adjacent_points(self,diagonals=False,lower_bound=None,upper_bound=None) -> list:
+    def get_adjacent_points(self,diagonals:bool=False,lower_bound:Optional['Point']=None,upper_bound:Optional['Point']=None) -> list:
         adj = [Point(0,1),Point(0,-1),Point(1,0),Point(-1,0)]
         if diagonals:
             adj += [Point(1,1),Point(-1,-1),Point(1,-1),Point(-1,1)]
@@ -69,95 +70,92 @@ class Point:
             adj = filter(lambda x: x < upper_bound, adj)
         return list(adj)
 
-    def in_bounds(self,lower_bound,upper_bound):
+    def in_bounds(self,lower_bound:'Point',upper_bound:'Point') -> bool:
         return lower_bound <= self < upper_bound
     
-    def copy(self):
+    def copy(self) -> 'Point':
         return Point(self.x,self.y)
 
-    def as_tuple(self):
+    def as_tuple(self) -> Tuple[float,float]:
         return (self.x,self.y)
 
-    def is_above(self,other):
+    def is_above(self,other:'Point') -> bool:
         return self.y > other.y
     
-    def is_below(self,other):
+    def is_below(self,other:'Point') -> bool:
         return self.y < other.y
 
-    def is_left_of(self,other):
+    def is_left_of(self,other:'Point') -> bool:
         return self.x < other.x
 
-    def is_right_of(self,other):
+    def is_right_of(self,other:'Point') -> bool:
         return self.x > other.x
     
-    def up(self):
+    def up(self) -> 'Point':
         return self + Point(0,1)
     
-    def down(self):
+    def down(self) -> 'Point':
         return self + Point(0,-1)
     
-    def left(self):
+    def left(self) -> 'Point':
         return self + Point(-1,0)
     
-    def right(self):
+    def right(self) -> 'Point':
         return self + Point(1,0)
 
     @staticmethod
-    def random(lower_bound,upper_bound):
+    def random(lower_bound:'Point',upper_bound:'Point') -> 'Point':
         return Point(randint(lower_bound.x,upper_bound.x),randint(lower_bound.y,upper_bound.y))
 
-    def to_vector(self):
+    def to_vector(self) -> 'Vector':
         return Vector(self.x,self.y)
 
 
-ORIGIN = Point(0,0)
+ORIGIN: Final[Point] = Point(0,0)
 
 
 
 class Vector(Point):
-    def __mul__(self,scalar:float):
+    def __mul__(self,scalar:float) -> 'Vector':
         return Vector(self.x*scalar,self.y*scalar)
 
-    def __truediv__(self,scalar:float):
+    def __truediv__(self,scalar:float) -> 'Vector':
         return Vector(self.x/scalar,self.y/scalar)
 
-    def __neg__(self):
+    def __neg__(self) -> 'Vector':
         return Vector(-self.x,-self.y)
-
-    # def __mul__(self,other):
-    #     return Vector(self.x*other.x,self.y*other.y)
 
     # def __div__(self,other):
     #     return Vector(self.x/other.x,self.y/other.y)
 
-    def cross(self,other):
+    def cross(self,other:'Vector') -> float:
         return (self.x*other.y) - (self.y*other.x)
 
-    def dot(self,other):
+    def dot(self,other:'Vector') -> float:
         return (self.x*other.x) + (self.y*other.y)
     
-    def magnitude(self):
+    def magnitude(self) -> Union[int,float]:
         val = (self.x**2 + self.y**2)**0.5
         return int(val) if val.is_integer() else val
 
-    def normalize(self):
+    def normalize(self) -> 'Vector':
         return self / self.magnitude()
 
-    def rotate(self,degree):
+    def rotate(self,degree:float) -> 'Vector':
         return Vector.from_vel(self.angle()+degree,1)
 
-    def __add__(self,other):
+    def __add__(self,other:'Vector') -> 'Vector':
         return Vector(self.x+other.x,self.y+other.y)
 
-    def area(self):
+    def area(self) -> float:
         return self.x*self.y
 
     @staticmethod
-    def from_vel(angle,step):
+    def from_vel(angle:float,step:float):
         return Vector(step*cos(angle),step*sin(angle))
 
     @staticmethod
-    def from_vel_degree(degree,step):
+    def from_vel_degree(degree:float,step:float) -> 'Vector':
         rad = degree / 180 * pi
         return Vector.from_vel(rad,step)
 
@@ -169,7 +167,6 @@ class Vector(Point):
         return (atan(self.y/self.x)) / pi * 180 + (180 if self.x < 0 else 360 if self.y < 0 else 0)
 
 
-import numpy as np
 class LineSegment:
     def __init__(self,p1:Point,p2:Point):
         if p1 == p2:
@@ -193,17 +190,17 @@ class LineSegment:
     def get_length(self) -> float:
         return (self.get_rise()**2 + self.get_run()**2)**0.5
 
-    def is_parallel_to(self,other) -> bool:
+    def is_parallel_to(self,other:'LineSegment') -> bool:
         delta_x = (self.get_run(),other.get_run())
         delta_y = (self.get_rise(),other.get_rise())
         return np.linalg.det(np.array((delta_x,delta_y))) == 0
     
-    def intersects(self,other) -> bool:
+    def intersects(self,other:'LineSegment') -> bool:
         # https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
-        ccw = lambda A,B,C: (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x)
+        def ccw(A,B,C): (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x)
         return ccw(self.p1,other.p1,other.p2) != ccw(self.p2,other.p1,other.p2) and ccw(self.p1,self.p2,other.p1) != ccw(self.p1,self.p2,other.p2)
 
-    def intersection(self,other) -> Point:
+    def intersection(self,other:'LineSegment') -> Point:
         if self.is_parallel_to(other):
             return None
 
@@ -222,19 +219,19 @@ class LineSegment:
         return Point(x,y)
 
 class Line:
-    def __init__(self,y_int:float,slope:float,vertical:bool=False,vertical_x:float=None):
+    def __init__(self,y_int:float,slope:float,vertical:bool=False,x_int:Optional[float]=None):
         self.vertical = vertical
-        self.vertical_x = vertical_x
+        self.x_int = x_int
         self.y_int = y_int
         self.slope = slope
     
-    def __str__(self):
+    def __str__(self) -> str:
         if self.vertical:
-            return 'x = {}'.format(self.vertical_x)
+            return 'x = {}'.format(self.x_int)
         return 'y = {}x + {}'.format(int(self.slope) if float(self.slope).is_integer() else self.slope, int(self.y_int) if float(self.y_int).is_integer() else self.y_int)
 
     @staticmethod
-    def extend_segment(segment:LineSegment):
+    def extend_segment(segment:LineSegment) -> 'Line':
         if segment.get_run() == 0:
             return Line.new_vertical(segment.p1.x)
         slope = segment.get_rise() / segment.get_run()
@@ -244,12 +241,12 @@ class Line:
     def get_y(self,x:float) -> float:
         return self.slope * x + self.y_int
     
-    def integer_points_along(self,lower_bound:Point,upper_bound:Point) -> set:
+    def integer_points_along(self,lower_bound:Point,upper_bound:Point) -> Set[Point]:
         points = set()
 
-        if self.vertical and lower_bound.x <= self.vertical_x <= upper_bound.x:
+        if self.vertical and lower_bound.x <= self.x_int <= upper_bound.x:
             for y in range(lower_bound.y, upper_bound.y+1):
-                points.add(Point(self.vertical_x,y))
+                points.add(Point(self.x_int,y))
             return points
             
         for x in range(lower_bound.x,upper_bound.x+1):
@@ -260,16 +257,16 @@ class Line:
                 points.add(Point(x,int(y)))
         return points
 
-    def contains_point(self,point:Point):
+    def contains_point(self,point:Point) -> bool:
         if self.vertical:
-            return self.vertical_x == point.x
+            return self.x_int == point.x
         return isclose(self.get_y(point.x),point.y,abs_tol=10**-6)
 
     @staticmethod
-    def new_vertical(x:float):
+    def new_vertical(x:float) -> 'Line':
         return Line(None, float('inf'), True, x)
 
-    def perpendicular(self,intersection:Point):
+    def perpendicular(self,intersection:Point) -> 'Line':
         if not self.contains_point(intersection):
             raise ValueError('Intersection point must lie on line')
 
@@ -283,16 +280,15 @@ class Line:
         return Line(new_y_int,new_slope)
 
     @property
-    def y_int(self):
+    def y_int(self) -> float:
         return self.__y_int
 
     @y_int.setter
-    def y_int(self,y_int):
+    def y_int(self,y_int:float):
         if self.vertical and y_int is not None:
             raise ValueError('Cannot change y-intercept of vertical line')
         self.__y_int = y_int
 
-from math import acos,pi,isclose
 class Corner:
     def __init__(self, vertex:Point, p1:Point, p2:Point):
         self.vertex = vertex
@@ -328,19 +324,19 @@ class Triangle:
         self.p2 = p2
         self.p3 = p3
 
-    def __contains__(self,pt):
+    def __contains__(self,pt:Point):
         return pt == self.p1 or pt == self.p2 or pt == self.p3
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (f'{str(self.p1)},{str(self.p2)},{str(self.p3)}')
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         p1 = min((self.p1,self.p2,self.p3))
         p3 = max((self.p1,self.p2,self.p3))
         p2 = self.p1 if p1 in (self.p2,self.p3) and p3 in (self.p2,self.p3) else self.p2 if p1 in (self.p1,self.p3) and p3 in (self.p1,self.p3) else self.p3
         return hash(str(p1)+str(p2)+str(p3))
 
-    def __eq__(self,other):
+    def __eq__(self,other:'Triangle') -> bool:
         return self.p1 in other and self.p2 in other and self.p3 in other
     
     def is_right(self) -> bool:
@@ -349,14 +345,14 @@ class Triangle:
         c3 = Corner(self.p3,self.p1,self.p2)
         return c1.is_right() or c2.is_right() or c3.is_right()
 
-    def as_list_of_edges(self) -> list:
-        return [list(self.p1.as_tuple()),list(self.p2.as_tuple()),list(self.p3.as_tuple())]
-        # l1 = [self.p1.as_tuple(),self.p2.as_tuple()]
-        # l2 = [self.p2.as_tuple(),self.p3.as_tuple()]
-        # l3 = [self.p1.as_tuple(),self.p3.as_tuple()]
-        # return [l1,l2,l3]
+    def as_list_of_edges(self) -> List[List[float]]:
+        # return [list(self.p1.as_tuple()),list(self.p2.as_tuple()),list(self.p3.as_tuple())]
+        l1 = [self.p1.as_tuple(),self.p2.as_tuple()]
+        l2 = [self.p2.as_tuple(),self.p3.as_tuple()]
+        l3 = [self.p1.as_tuple(),self.p3.as_tuple()]
+        return [l1,l2,l3]
 
-    def signed_area(self) -> int :
+    def signed_area(self) -> int:
         return 0.5 *(-self.p2.y*self.p3.x + self.p1.y*(-self.p2.x + self.p3.x) + self.p1.x*(self.p2.y - self.p3.y) + self.p2.x*self.p3.y)
     
     def area(self) -> int:
@@ -367,17 +363,15 @@ class Triangle:
         t = 1/(2*self.signed_area())*(self.p1.x*self.p2.y - self.p1.y*self.p2.x + (self.p1.y - self.p2.y)*pt.x + (self.p2.x - self.p1.x)*pt.y)
         return s,t,1-s-t
     
-    def __contains__(self,pt:Point) -> bool:
+    def contains(self,pt:Point) -> bool:
         s,t,_ = self.barycentric_coordinates(pt)
         return s > 0 and t > 0 and 1-s-t > 0
     
-    def as_tuple(self):
+    def as_tuple(self) -> Tuple[Tuple[float,float]]:
         return tuple(item for pt in (self.p1,self.p2,self.p3) for item in pt.as_tuple())
 
 
-import math
 class Circle:
-    PI = math.pi
     def __init__(self,center:Point,radius:float):
         self.center = center
         self.radius = radius
@@ -388,16 +382,16 @@ class Circle:
 
     @property
     def circumference(self):
-        return self.diameter * Circle.PI
+        return self.diameter * pi
 
     @property
     def area(self):
-        return Circle.PI * self.radius ** 2
+        return pi * self.radius ** 2
 
     def __contains__(self,pt:Point) -> bool:
         return self.center.euclidean_distance(pt) <= self.radius
 
-    def intersects(self,other) -> bool:
+    def intersects(self,other:'Circle') -> bool:
         d = (self.center - other.center).magnitude()
         if d == 0:
             return self.radius == other.radius
@@ -408,23 +402,23 @@ class Circle:
         return True
         
     # Find intersection points on two arcs: https://stackoverflow.com/questions/47863261/find-point-of-intersection-between-two-arc
-    def intersecting_points(self,other) -> List[Point]:
+    def intersecting_points(self,other:'Circle') -> Optional[Tuple[Point,Point]]:
         other:Circle = other
         if self.center == other.center:
             raise ValueError('Intersecting circles cannot share the same center')
 
         if not self.intersects(other):
-            return []
+            return None
         d = (self.center - other.center).magnitude()
         a=(self.radius**2-other.radius**2+d**2)/(2*d)
-        h=math.sqrt(self.radius**2-a**2)
+        h=(self.radius**2-a**2)**0.5
 
         p2 = self.center +  (other.center-self.center) * a/d
         x3 = round(p2.x + (other.center.y-self.center.y)*h/d,8)
         y3 = round(p2.y - (other.center.x-self.center.x)*h/d,8)
         x4 = round(p2.x - (other.center.y-self.center.y)*h/d,8)
         y4 = round(p2.y + (other.center.x-self.center.x)*h/d,8)
-        return [Point(x3,y3),Point(x4,y4)]
+        return Point(x3,y3),Point(x4,y4)
 
 class Ellipse:
     def __init__(self,focus1:Point,focus2:Point,point_on_ellipse:Point):
@@ -432,7 +426,7 @@ class Ellipse:
         self.focus2 = focus2
         a = focus1.euclidean_distance(point_on_ellipse)
         b = focus2.euclidean_distance(point_on_ellipse)
-        f = (focus2 - focus1).magnitude()
+        f = (focus2 - focus1).to_vector().magnitude()
         self.minor_axis = ((a+b)**2 - f**2)**0.5
         self.major_axis = a+b
         

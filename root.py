@@ -1,17 +1,20 @@
+from typing import List
+
+
 class IntegerSquareRoot:
     def __init__(self,n:int,precision:int):
         self.n = n
         self.precision = precision
         self.__calculate()
 
-    def __get_pairs(self):
+    def __get_pairs(self) -> List[str]:
         string = str(self.n)
         if self.offset%2 == 1:
             string = '0' + string
         return [int(string[i:i+2]) for i in range(0,len(string),2)]
 
     # Uses the algorithm described here: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Decimal_(base_10)
-    def __calculate(self):
+    def __calculate(self) -> None:
         self.offset = len(str(self.n)) + len(str(self.n))%2
         self.value = []
         pairs = self.__get_pairs()

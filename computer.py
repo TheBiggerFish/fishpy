@@ -1,9 +1,9 @@
-from typing import Any,Dict,List,Callable
-from fishpy.structures import Enum
+from typing import Any,Dict,List,Callable, NewType
+from enum import IntFlag
 
-ProgramCounter = int
+ProgramCounter = NewType('ProgramCounter',int)
 
-class Operand(Enum):
+class Operand(IntFlag):
     REGISTER = 1
     CONSTANT = 2
     ADDRESS = 4

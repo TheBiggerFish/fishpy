@@ -1,6 +1,6 @@
 
 from networkx import Graph
-from typing import List,Any,Dict,Callable
+from typing import List,Dict,Callable, Optional, Tuple
 from itertools import permutations
 
 class PathGraph(Graph):
@@ -19,7 +19,7 @@ class PathGraph(Graph):
     def get_length_of_path(self,path:List[str]) -> int:
         return sum([self.edges[path[i],path[i+1]]['weight'] for i in range(len(path)-1)])
 
-    def complete_hamiltonian_paths(self,start=None,end=None,cycle=False):
+    def complete_hamiltonian_paths(self,start:Optional[str]=None,end:Optional[str]=None,cycle:bool=False) -> List[Tuple[int,List[str]]]:
         if cycle and start is not None and end is not None and start != end:
             raise ValueError('A cycle must start and end at the same node')
 
@@ -47,12 +47,9 @@ class PathGraph(Graph):
 
         return [(self.get_length_of_path(start + list(perm) + end), start + list(perm) + end) for perm in permutations(nodes)]
 
-    def complete_travelling_salesman(self,start=None,end=None,max_=False):
+    def complete_travelling_salesman(self,start:Optional[str]=None,end:Optional[str]=None,max_:bool=False) -> List[str]:
         if max_:
             rv = max(self.complete_hamiltonian_paths(start,end))
         else:
             rv = min(self.complete_hamiltonian_paths(start,end))
         return rv[1]
-
-
-G = PathGraph()

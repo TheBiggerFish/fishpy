@@ -1,12 +1,13 @@
 import string
+from typing import Final, Set
 
-LETTER_SET = set(string.ascii_letters)
-LOWERCASE_SET = set(string.ascii_lowercase)
-UPPERCASE_SET = set(string.ascii_uppercase)
-DIGIT_SET = set(string.digits)
-PUNCTUATION_SET = set(string.punctuation)
-WHITESPACE_SET = set(string.whitespace)
-ALPHANUMERIC_SET = LETTER_SET | DIGIT_SET
+LETTER_SET: Final[Set[str]] = set(string.ascii_letters)
+LOWERCASE_SET: Final[Set[str]] = set(string.ascii_lowercase)
+UPPERCASE_SET: Final[Set[str]] = set(string.ascii_uppercase)
+DIGIT_SET: Final[Set[str]] = set(string.digits)
+PUNCTUATION_SET: Final[Set[str]] = set(string.punctuation)
+WHITESPACE_SET: Final[Set[str]] = set(string.whitespace)
+ALPHANUMERIC_SET: Final[Set[str]] = LETTER_SET | DIGIT_SET
 
 def levenshtein(a:str, b:str) -> int:
     if not len(a):
@@ -22,7 +23,7 @@ def levenshtein(a:str, b:str) -> int:
     )
 
 
-def adjacent_strings(string:str,char_set:set=LETTER_SET,removal:bool=True,addition:bool=True,substitution:bool=False,transpositions:bool=False):
+def adjacent_strings(string:str,char_set:Set[str]=LETTER_SET,removal:bool=True,addition:bool=True,substitution:bool=False,transpositions:bool=False):
     rv = []
     if removal:
         for i in range(len(string)):

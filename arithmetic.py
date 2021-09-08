@@ -1,5 +1,7 @@
-from typing import Any, Callable, Dict, List, Set, Tuple, Type, Union
-from fishpy.structures import Node,Enum
+from typing import Any, Callable, Dict, Final, List, Optional, Set, Tuple, Type, Union
+from enum import Enum
+
+from fishpy.structures import Node
 
 
 class Operation:
@@ -29,7 +31,7 @@ class GroupOperation(Operation):
                 count -= 1
             if count == 0:
                 return i
-        return -1
+        raise ValueError(f'Unmatched group operator at position {index}')
     
     def is_around_string(self,exp:str) -> bool:
         if len(exp) < 2:
@@ -41,13 +43,13 @@ class GroupOperation(Operation):
     def group_string(self,nested:Any) -> str:
         return self.open + str(nested) + self.close
 
-ADDITION = Operation('+',lambda a,b: a+b)
-SUBTRACTION = Operation('-',lambda a,b: a-b)
-MULTIPLICATION = Operation('*',lambda a,b: a*b)
-DIVISION = Operation('/',lambda a,b: a/b)
-MODULUS = Operation('%',lambda a,b: a%b)
-EXPONENTIATION = Operation('^',lambda a,b: a**b)
-PARENTHESES = GroupOperation('(',')')
+ADDITION: Final[Operation] = Operation('+',lambda a,b: a+b)
+SUBTRACTION: Final[Operation] = Operation('-',lambda a,b: a-b)
+MULTIPLICATION: Final[Operation] = Operation('*',lambda a,b: a*b)
+DIVISION: Final[Operation] = Operation('/',lambda a,b: a/b)
+MODULUS: Final[Operation] = Operation('%',lambda a,b: a%b)
+EXPONENTIATION: Final[Operation] = Operation('^',lambda a,b: a**b)
+PARENTHESES: Final[Operation] = GroupOperation('(',')')
 
 
 class OrderedOperation:
@@ -64,7 +66,7 @@ class OrderedOperation:
             return True
         return self.precedence < other.precedence
 
-PEMDAS = [OrderedOperation(PARENTHESES,OrderedOperation.GROUP_OPERATION_ORDER),
+PEMDAS: Final[List[OrderedOperation]] = [OrderedOperation(PARENTHESES,OrderedOperation.GROUP_OPERATION_ORDER),
           OrderedOperation(EXPONENTIATION,2),
           OrderedOperation(MULTIPLICATION,1),
           OrderedOperation(DIVISION,1),
@@ -84,11 +86,11 @@ class EvaluationDirection(Enum):
     
 
 class Expression(Node):
-    def __init__(self,value:Union[int,float,Operation],node_type:ExpressionNodeType,children:List,parent=None):
+    def __init__(self,value:Union[int,float,Operation],node_type:ExpressionNodeType,children:List['Expression'],parent:Optional['Expression']=None):
         super().__init__(value,'',children,parent)
         self.node_type = node_type
         
-    def __str__(self):
+    def __str__(self) -> str:
         if self.node_type == ExpressionNodeType.CONSTANT:
             return str(self.value)
         elif self.node_type == ExpressionNodeType.GROUP:
