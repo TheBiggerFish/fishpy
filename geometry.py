@@ -1,6 +1,6 @@
 from typing import Final, Optional, Set, Tuple, List, Union
 from random import randint
-from math import cos,sin,pi,atan,acos,isclose
+from math import cos,sin,pi,atan,acos,isclose,radians,degrees
 import numpy as np
 
 class Point:
@@ -156,15 +156,14 @@ class Vector(Point):
 
     @staticmethod
     def from_vel_degree(degree:float,step:float) -> 'Vector':
-        rad = degree / 180 * pi
-        return Vector.from_vel(rad,step)
+        return Vector.from_vel(radians(degree),step)
 
     def angle(self) -> float:
         if self.x == 0:
             if self.y == 0:
                 raise ValueError('Zero vector (0,0) does not have an angle')
             return 90.0 if self.y > 0 else 270.0
-        return (atan(self.y/self.x)) / pi * 180 + (180 if self.x < 0 else 360 if self.y < 0 else 0)
+        return degrees(atan(self.y/self.x)) + (180 if self.x < 0 else 360 if self.y < 0 else 0)
 
 
 class LineSegment:
@@ -305,7 +304,7 @@ class Corner:
         area = leg1.get_length() * leg2.get_length()
 
         dot = a[0] * b[0] + a[1] * b[1]
-        return round(acos(dot/area) * 180 / pi,5)
+        return round(degrees(acos(dot/area)),5)
     
     def is_right(self) -> bool:
         leg1 = LineSegment(self.vertex,self.p1)
@@ -438,7 +437,7 @@ class Ellipse:
 
     def __contains__(self,pt:Point) -> bool:
         c = self.center()
-        angle = self.angle * pi / 180
+        angle = radians(self.angle)
         t1 = (cos(angle)*(pt.x-c.x) + sin(angle)*(pt.y-c.y))**2 / (self.major_axis/2)**2
         t2 = (sin(angle)*(pt.x-c.x) - cos(angle)*(pt.y-c.y))**2 / (self.minor_axis/2)**2
         return t1 + t2 <= 1
