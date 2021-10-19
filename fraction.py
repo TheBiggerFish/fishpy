@@ -1,11 +1,15 @@
+"""Structures to be used in evaluating fractions and continued fractions"""
+
+#pylint: disable=invalid-name
 from math import gcd
-from typing import Optional, Sequence, Union
+from typing import Optional, Sequence
+
 
 class Fraction:
     def __init__(self,numer,denom=1):
         self.n = numer
         self.d = denom
-    
+
     def is_proper(self) -> bool:
         return self.n < self.d
 
@@ -14,13 +18,13 @@ class Fraction:
 
     def reciprocal(self) -> 'Fraction':
         return Fraction(self.d,self.n)
-    
+
     def add_int(self,num:int) -> 'Fraction':
         return Fraction(self.n + (num * self.d),self.d)
 
     def __mul__(self,other:'Fraction') -> 'Fraction':
         return Fraction(self.n*other.n,self.d*other.d)
-    
+
     def __add__(self,other:'Fraction') -> 'Fraction':
         lcd = Fraction.lcd(self,other)
         self_n = self.n * (lcd // self.d)
@@ -29,7 +33,7 @@ class Fraction:
 
     def __str__(self) -> str:
         return str(self.n) + '/' + str(self.d)
-    
+
     def __lt__(self,other:'Fraction') -> bool:
         return self.evaluate() < other.evaluate()
 
@@ -54,15 +58,15 @@ class Fraction:
     def __hash__(self) -> int:
         if self.n >= self.d:
             return self.n * self.n + self.n + self.d
-        else:
-            return self.d * self.d + self.n
+        return self.d * self.d + self.n
 
 class ContinuedFraction:
-    def __init__(self,addend:int=0,numer:int=0,denom:Optional['ContinuedFraction']=None):
+    def __init__(self,addend:int=0,numer:int=0,
+                 denom:Optional['ContinuedFraction']=None):
         self.a = addend
         self.n = numer
         self.d = denom
-        
+
     @staticmethod
     # Generate continued fraction using a continued fraction representation sequence.
     # The value x is used to generate the numerators of the continued fraction
@@ -78,7 +82,7 @@ class ContinuedFraction:
             frac.n = x-1
             frac.a = num
         return frac
-    
+
     # Determines the representation sequence of a continued fraction
     def get_seq(self) -> Sequence[int]:
         seq = [self.a]
@@ -104,10 +108,12 @@ class ContinuedFraction:
     def reduce_fraction(self) -> Fraction:
         if self.n == 0 or self.d is None:
             return Fraction(self.a)
-        return (Fraction(self.n) * self.d.reduce_fraction().reciprocal()).add_int(self.a)
+        sub_fraction = Fraction(self.n) * self.d.reduce_fraction().reciprocal()
+        return sub_fraction.add_int(self.a)
 
     @staticmethod
-    # Generate a continued fraction representation sequence of length l for a square root of number n
+    # Generate a continued fraction representation sequence of
+    #   length l for a square root of number n
     def gen_sqrt_seq(n:int,l:int) -> Sequence[int]:
         if (n**0.5).is_integer():
             return [n**0.5]
@@ -128,11 +134,11 @@ class ContinuedFraction:
     @property
     def a(self) -> int:
         return self.__a
-        
+
     @property
     def n(self) -> int:
         return self.__n
-    
+
     @property
     def d(self) -> 'ContinuedFraction':
         return self.__d
