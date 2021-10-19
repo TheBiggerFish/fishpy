@@ -43,9 +43,11 @@ class Computer:
         self.regs = registers
 
     def execute_instruction(self,instruction:Instruction):
+        """Execute a single instruction on the computer"""
         self.pc = instruction(self.pc,self.regs)
 
     def execute(self,program:List[Instruction]):
+        """Execute a list of instructions until the PC falls outside of range"""
         while 0 <= self.pc < len(program):
             self.execute_instruction(program[self.pc])
 
