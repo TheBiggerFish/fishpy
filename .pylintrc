@@ -154,6 +154,7 @@ confidence=
       ;   exception-escape,
       ;   comprehension-escape,
 disable=too-few-public-methods,
+        too-many-arguments,
         invalid-name
 
 # Enable the message, report, category or checker with the given id(s). You can
