@@ -1,25 +1,33 @@
-from typing import Any,Dict,List,Callable, NewType
+"""Virtual machine configurable to simple programming languages"""
+
 from enum import IntFlag
+from typing import Any, Callable, Dict, List, NewType
 
 ProgramCounter = NewType('ProgramCounter',int)
 
 class Operand(IntFlag):
+    """Enumeration of operands to be used in operations"""
+
     REGISTER = 1
     CONSTANT = 2
     ADDRESS = 4
     ANY = 7
 
 class Operation:
-    def __init__(self,identifier:Any,function:Callable[[List[str],Dict[str,Any],ProgramCounter],ProgramCounter],operands:List[Operand]):
+    """Class representing program operations"""
+
+    def __init__(self, identifier:Any, function:Callable[[List[str],Dict[str,Any],ProgramCounter],ProgramCounter],operands:List[Operand]):
         self.identifier = identifier
         self.function = function
         self.operands = operands
 
 class Instruction:
+    """Class representing individual program instructions"""
+
     def __init__(self,operation:Operation,arguments:List[str]):
         self.operation = operation
         self.arguments = arguments
-        assert(len(operation.operands) == len(arguments))
+        assert len(operation.operands) == len(arguments)
 
     def __call__(self,pc:ProgramCounter,regs:Dict[str,Any]):
         return self.operation.function(self.arguments,regs,pc)
@@ -28,6 +36,8 @@ class Instruction:
         return f'{self.operation.identifier} {" ".join(self.arguments)}'
 
 class Computer:
+    """Class used to execute programs"""
+
     def __init__(self,registers:Dict[str,Any],initial_pc:ProgramCounter=0):
         self.pc = initial_pc
         self.regs = registers
