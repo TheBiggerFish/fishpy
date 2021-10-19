@@ -1,7 +1,10 @@
 
-from networkx import Graph
-from typing import List,Dict,Callable, Optional, Tuple
+import enum
 from itertools import permutations
+from typing import Callable, Dict, List, Optional, Tuple
+
+from networkx import Graph
+
 
 class PathGraph(Graph):
 
@@ -12,10 +15,10 @@ class PathGraph(Graph):
 
     def add_weighted_edges_for_complete(self,weight_function:Callable[[str,str],int]) -> None:
         nodes = list(self.nodes)
-        for i in range(len(nodes)):
+        for i,_ in enumerate(nodes):
             for j in range(i+1, len(nodes)):
                 self.add_edge(nodes[i],nodes[j],weight=weight_function(nodes[i],nodes[j]))
-                
+
     def get_length_of_path(self,path:List[str]) -> int:
         return sum([self.edges[path[i],path[i+1]]['weight'] for i in range(len(path)-1)])
 
@@ -45,7 +48,12 @@ class PathGraph(Graph):
             else:
                 end = []
 
-        return [(self.get_length_of_path(start + list(perm) + end), start + list(perm) + end) for perm in permutations(nodes)]
+        ret_val = []
+        for perm in nodes:
+            path = start + list(perm) + end
+            length = self.get_length_of_path(path)
+            ret_val.append((length,path))
+        return ret_val
 
     def complete_travelling_salesman(self,start:Optional[str]=None,end:Optional[str]=None,max_:bool=False) -> List[str]:
         if max_:
