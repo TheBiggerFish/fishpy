@@ -1,7 +1,6 @@
 from typing import Any, Dict, Iterable, List
 
-from fishpy.geometry import Point3D
-
+from ...geometry import Point3D
 from ..location3d import Location3D
 from .grid import Grid
 

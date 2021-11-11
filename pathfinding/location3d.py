@@ -1,6 +1,6 @@
 from enum import Enum
 
-from fishpy.geometry import Point3D
+from ..geometry import Point3D
 
 
 class Location3D(Point3D):

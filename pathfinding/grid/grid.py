@@ -1,7 +1,6 @@
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
-from fishpy.geometry import Point
-
+from ...geometry import Point
 from ..location import Location
 
 
@@ -35,7 +34,7 @@ class Grid:
             for col in row:
                 yield col
 
-    def __eq__(self,other:Location) -> bool:
+    def __eq__(self,other:'Grid') -> bool:
         if self.bounds != other.bounds or self._offset != other._offset:
             return False
         for pt in self:
@@ -44,7 +43,7 @@ class Grid:
         return True
 
     def char_positions(self,chars:List[str]) -> Dict[str,List[Point]]:
-        mapping = {}
+        mapping:Dict[str,List[Point]] = {}
         for char in chars:
             mapping[char] = []
         for x in range(self._offset.x,self._offset.x+self.width):

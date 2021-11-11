@@ -1,6 +1,6 @@
 from typing import Callable, Generic, List, Optional, TypeVar, Union
 
-from fishpy.structures import Stack
+from ..structures import Stack
 
 T = TypeVar('T')
 
