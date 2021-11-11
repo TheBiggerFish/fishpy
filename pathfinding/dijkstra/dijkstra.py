@@ -1,3 +1,8 @@
+"""
+Provides a class implementing Dijkstra's Algorithm with support of heuristics (A*)
+"""
+
+
 from functools import cached_property
 from queue import PriorityQueue
 from typing import Callable, Generic, List, Optional, TypeVar
@@ -7,6 +12,8 @@ from .dijkstraitem import DijkstraItem
 T = TypeVar('T')
 
 class Dijkstra(Generic[T]):
+    """Class implementing Dijkstra's Algorithm with support for heuristics"""
+
     def __init__(self, start:T, target:T,
                  adjacency_function: Callable[[T],List[T]],
                  validation_function: Optional[Callable[[T],bool]] = None,
@@ -28,6 +35,8 @@ class Dijkstra(Generic[T]):
         self.q.put(DijkstraItem(self.start,0,estimate))
 
     def search(self, max_depth: int = -1) -> int:
+        """Perform the shortest path search for the target"""
+
         if self.target in self.seen:
             return self._dist
         while not self.q.empty():
@@ -47,7 +56,7 @@ class Dijkstra(Generic[T]):
             if g > max_depth > -1:
                 continue
             for adj in self._adjacency_function(item.value):
-                if self._validation_function is None or self._validation_function(adj): 
+                if self._validation_function is None or self._validation_function(adj):
                     if adj not in self.seen and adj not in self.prev:
                         h = DijkstraItem.get_h(adj,self.target,self._heuristic_function)
                         self.q.put(DijkstraItem(adj,g,h))
@@ -56,6 +65,11 @@ class Dijkstra(Generic[T]):
 
     @cached_property
     def path(self) -> List[T]:
+        """
+        Return the path taken from start to the target
+        Can only be called after search has been performed
+        """
+
         path = []
         cur = self.target
         while cur in self.prev:
@@ -65,4 +79,6 @@ class Dijkstra(Generic[T]):
         return list(reversed(path))
 
     def stringify(self, string_function:Callable[[List[T],List[T]],str]) -> str:
+        """Return a string version of the search built by a passed in string_function"""
+
         return string_function(path=self.path, seen=self.path)

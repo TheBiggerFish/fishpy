@@ -1,8 +1,12 @@
+"""Provides a class to be used in priority queue for Dijkstra pathfinding search"""
+
 from typing import Callable, Generic, TypeVar
 
 T = TypeVar('T')
 
 class DijkstraItem(Generic[T]):
+    """Class to be used in priority queue for Dijkstra pathfinding search"""
+
     def __init__(self, value:T, g:int, h: int = 0):
         self.value = value
         self.g = g
@@ -10,6 +14,7 @@ class DijkstraItem(Generic[T]):
 
     @staticmethod
     def get_h(source, target, heuristic_function:Callable[[T],int]) -> int:
+        """Return the heuristic value for a given source and target"""
         if heuristic_function is not None:
             return heuristic_function(source,target)
         return 0
