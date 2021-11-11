@@ -1,3 +1,5 @@
+"""Setup for fishpy"""
+
 import setuptools
 
 with open('README.md', 'r', encoding='utf-8') as fh:
@@ -17,6 +19,11 @@ setuptools.setup(
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
+    ],
+    install_requires=[
+        'networkx',
+        'sympy',
+        'multiset',
     ],
     python_requires='>=3.6',
 )
