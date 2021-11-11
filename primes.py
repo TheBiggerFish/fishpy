@@ -2,8 +2,6 @@
 This module provides a set of functions related to prime numbers.
 """
 
-# pylint: disable=invalid-name
-
 from math import gcd
 from typing import Set
 
