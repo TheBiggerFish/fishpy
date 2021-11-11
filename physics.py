@@ -1,4 +1,4 @@
-from fishpy.geometry import Point, Vector
+from .geometry import Point, Vector
 
 
 class Object:
