@@ -99,6 +99,7 @@ class OrderedOperation:
             return True
         return self.precedence < other.precedence
 
+# Default order of operations created with a list of OrderedOperations
 PEMDAS: Final[List[OrderedOperation]] = [
     OrderedOperation(PARENTHESES,OrderedOperation.GROUP_OPERATION_ORDER),
     OrderedOperation(EXPONENTIATION,2),
@@ -123,12 +124,17 @@ class EvaluationDirection(Enum):
 
 
 class Expression(Node):
+    """
+        Class to represent, interpret, and evaluate arithmetic expressions
+        using arbitrary operations
+    """
+
     def __init__(self,value:Union[int,float,Operation],
                  node_type:ExpressionNodeType,
                  children:Optional[List['Expression']]=None,
                  parent:Optional['Expression']=None):
         if children is None:
-            children = []
+            children:List['Expression'] = []
         super().__init__(value,'',children,parent)
         self.node_type = node_type
 
@@ -149,6 +155,7 @@ class Expression(Node):
         return ''
 
     def evaluate(self) -> Union[float,int]:
+        """Evaluate and return the value of the expression"""
         if self.node_type == ExpressionNodeType.CONSTANT:
             return self.value
         if self.node_type == ExpressionNodeType.GROUP:
@@ -166,6 +173,11 @@ class Expression(Node):
     def build_from_string(exp:str,
                           order_of_operations:Optional[List[OrderedOperation]]=None,
                           eval_dir:EvaluationDirection=EvaluationDirection.LEFT_TO_RIGHT):
+        """
+            Interpret an arithmetic expression string using a provided order
+            of operations and evaluation direction. Returns the resulting
+            Expression object
+        """
 
         if order_of_operations is None:
             order_of_operations = PEMDAS
