@@ -1,3 +1,10 @@
+"""
+This module provides a grid class which can be used in displaying 2D
+pathfinding which follows a lattice grid
+"""
+
+#pylint:disable=protected-access
+
 from typing import Any, Callable, Dict, Iterable, List, Optional
 
 from ...geometry import Point
@@ -5,6 +12,11 @@ from ..location import Location
 
 
 class Grid:
+    """
+    A class which can be used in displaying 2D pathfinding which follows a
+    lattice grid
+    """
+
     def __init__(self,grid:List[List[Location]],offset:Point=Point(0,0)):
         self.grid = grid
         self._iter = Point(0,0)
@@ -43,6 +55,12 @@ class Grid:
         return True
 
     def char_positions(self,chars:List[str]) -> Dict[str,List[Point]]:
+        """
+        Return a list of points for each character passed in the "chars" list
+        which represents the list of positions in which that character can be
+        found on the grid
+        """
+
         mapping:Dict[str,List[Point]] = {}
         for char in chars:
             mapping[char] = []
@@ -54,7 +72,10 @@ class Grid:
         return mapping
 
     @classmethod
-    def from_list_of_strings(cls,rows:List[str],wall_char:str='#',offset:Point=Point(0,0)) -> 'Grid':
+    def from_list_of_strings(cls,rows:List[str],wall_char:str='#',
+                             offset:Point=Point(0,0)) -> 'Grid':
+        """Build a grid from a list of strings of equal length"""
+
         bounds = Point(len(rows[0]),len(rows))
         grid = cls.blank(bounds,offset)
         for x in range(bounds.x):
@@ -66,6 +87,8 @@ class Grid:
 
     @classmethod
     def blank(cls,bounds:Point,offset:Point=Point(0,0)) -> 'Grid':
+        """Return a blank grid of the given size \"bounds\""""
+
         grid = []
         for y in range(bounds.y):
             row = []
@@ -76,19 +99,24 @@ class Grid:
 
     @property
     def width(self) -> int:
+        """This property represents the width of the grid"""
         if self.height == 0:
             return 0
         return len(self.grid[0])
 
     @property
     def height(self) -> int:
+        """This property represents the height of the grid"""
         return len(self.grid)
 
     @property
     def bounds(self) -> Point:
+        """This property represents the width and height of the grid"""
         return Point(self.width,self.height)
 
     def copy(self) -> 'Grid':
+        """This method returns a deep copy of self"""
+
         grid = []
         for y in range(self._offset.y,self._offset.y+self.height):
             row = []
@@ -101,6 +129,12 @@ class Grid:
         return grid
 
     def conditional_walls(self,predicate_function:Callable[[Point],bool],char:str) -> 'Grid':
+        """
+        This method can be used to add walls based on the results of a
+        function which takes in a Point and returns a boolean for whether
+        there should be a wall at that point
+        """
+
         new = self.copy()
         for y in range(self._offset.y,self._offset.y+new.height):
             for x in range(self._offset.x,self._offset.x+new.width):
@@ -109,7 +143,13 @@ class Grid:
                     new[pt] = Location(x,y,Location.IMPASSABLE,char)
         return new
 
-    def draw_search(self,path:list,explored:set,path_char:str='*',explored_char:str='o') -> str:
+    def draw_search(self,path:list,explored:Optional[set]=None,
+                    path_char:str='*',explored_char:str='o') -> str:
+        """
+        This function can be used to draw a search by passing in the path
+        taken and the set of explored points
+        """
+
         for pt in explored:
             if pt in self:
                 self[pt].rep = explored_char
@@ -118,6 +158,8 @@ class Grid:
                 self[pt].rep = path_char
 
     def overlay(self,other:'Grid',empty:str='.'):
+        """Overlay the self grid over top of another grid"""
+
         if self.bounds != other.bounds or self._offset != other._offset:
             raise ValueError('Grids must be exactly overlapping to overlay')
 
@@ -129,6 +171,8 @@ class Grid:
 
 
     def to_string(self,separator:str=' '):
+        """Returns a string representation with an arbitrary separator"""
+
         return '\n'.join([separator.join([str(col) for col in row]) for row in self.grid])
 
 
@@ -136,7 +180,14 @@ class Grid:
         return self.to_string()
 
 
-    def subgrid(self,lower_bound:Optional[Point]=None,upper_bound:Optional[Point]=None,reference:bool=False) -> 'Grid':
+    def subgrid(self,lower_bound:Optional[Point]=None,
+                upper_bound:Optional[Point]=None,
+                reference:bool=False) -> 'Grid':
+        """
+        Generate a grid based on the sub-selection between "lower_bound" and
+        "upper_bound"
+        """
+
         if not lower_bound:
             lower_bound = self._offset
         if not upper_bound:
