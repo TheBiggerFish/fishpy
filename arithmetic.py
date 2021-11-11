@@ -7,7 +7,7 @@ from enum import Enum
 from typing import (Any, Callable, Dict, Final, List, Optional, Set, Tuple,
                     Union)
 
-from fishpy.structures import Node
+from .structures import Node
 
 
 class Operation:
@@ -82,7 +82,8 @@ PARENTHESES: Final[Operation] = GroupOperation('(',')')
 
 class OrderedOperation:
     """
-    
+        Class to represent and compare operations that must be performed in
+        order
     """
 
     GROUP_OPERATION_ORDER:Final[int] = -1
