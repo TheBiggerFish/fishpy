@@ -1,10 +1,16 @@
+"""Provides a class for calculating integer square roots"""
+
 from typing import List
 
 
 class IntegerSquareRoot:
+    """A class for calculating integer square roots"""
+
     def __init__(self,n:int,precision:int):
         self.n = n
         self.precision = precision
+        self.offset = len(str(self.n)) + len(str(self.n))%2
+        self.value = []
         self.__calculate()
 
     def __get_pairs(self) -> List[str]:
@@ -13,10 +19,9 @@ class IntegerSquareRoot:
             string = '0' + string
         return [int(string[i:i+2]) for i in range(0,len(string),2)]
 
-    # Uses the algorithm described here: https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Decimal_(base_10)
+    # Uses the algorithm described here:
+    #   https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Decimal_(base_10)
     def __calculate(self) -> None:
-        self.offset = len(str(self.n)) + len(str(self.n))%2
-        self.value = []
         pairs = self.__get_pairs()
         c,p = 0,0
         for i in range(self.precision):
