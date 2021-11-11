@@ -22,4 +22,4 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         cd ..
-        pylint fishpy
+        pylint fishpy --rcfile fishpy/pylintrc
