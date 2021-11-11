@@ -1,9 +1,13 @@
+"""Provides a class to represent 3D locations"""
+
 from enum import Enum
 
 from ..geometry import Point3D
 
 
 class Location3D(Point3D):
+    """A class used to represent 3D locations"""
+
     OPEN = 0
     IMPASSABLE = 1
     def __init__(self,x:int,y:int,z:int,type_:Enum,rep:str=' '):
