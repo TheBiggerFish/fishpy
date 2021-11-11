@@ -155,7 +155,8 @@ confidence=
       ;   comprehension-escape,
 disable=too-few-public-methods,
         too-many-arguments,
-        invalid-name
+        invalid-name,
+        len-as-condition,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
