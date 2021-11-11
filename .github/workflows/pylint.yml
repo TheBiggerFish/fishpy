@@ -21,6 +21,5 @@ jobs:
         pip install .
     - name: Analysing the code with pylint
       run: |
-        files=`find -not -path "*build*" -iname "*.py"|xargs`
-        echo $files
-        pylint $files
+        cd ..
+        pylint fishpy
