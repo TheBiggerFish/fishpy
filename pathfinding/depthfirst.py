@@ -1,3 +1,5 @@
+"""Provides a class implementing a depth first search"""
+
 from typing import Callable, Generic, List, Optional, TypeVar, Union
 
 from ..structures import Stack
@@ -5,6 +7,8 @@ from ..structures import Stack
 T = TypeVar('T')
 
 class DepthFirstTraversal(Generic[T]):
+    """A class implementing a depth first search"""
+
     def __init__(self, start:T, target:T,
                  adjacency_function: Callable[[T],List[T]],
                  distance_function: Optional[Callable[[T,T],Union[int,float]]] = None,
@@ -29,6 +33,8 @@ class DepthFirstTraversal(Generic[T]):
         self.stack.push(self.start)
 
     def execute(self):
+        """Execute the depth first search and return the length of shortest path to target"""
+
         while not self.stack.empty():
             cur = self.stack.pop()
             neighbors = self._adjacency_function(cur)
@@ -41,7 +47,10 @@ class DepthFirstTraversal(Generic[T]):
                 if self._distance_function is not None:
                     self._distance_function(cur,adj)
                 new_distance = self.distance[cur] + d
-                if adj not in self.distance or (self.longest_path and self.distance[adj] < new_distance) or (not self.longest_path and self.distance[adj] > new_distance):
+                if (adj not in self.distance
+                    or (self.longest_path and self.distance[adj] < new_distance)
+                    or (not self.longest_path and self.distance[adj] > new_distance)):
+
                     self.distance[adj] = new_distance
                     self.prev[adj] = cur
                     if not(self.longest_path and adj == self.target):
