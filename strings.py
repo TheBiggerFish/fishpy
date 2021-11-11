@@ -1,15 +1,23 @@
-import string
-from typing import Final, Set
+"""
+This module provides a set of functions and constants related to strings.
+"""
 
-LETTER_SET: Final[Set[str]] = set(string.ascii_letters)
-LOWERCASE_SET: Final[Set[str]] = set(string.ascii_lowercase)
-UPPERCASE_SET: Final[Set[str]] = set(string.ascii_uppercase)
-DIGIT_SET: Final[Set[str]] = set(string.digits)
-PUNCTUATION_SET: Final[Set[str]] = set(string.punctuation)
-WHITESPACE_SET: Final[Set[str]] = set(string.whitespace)
+
+from string import (ascii_letters, ascii_lowercase, ascii_uppercase, digits,
+                    punctuation, whitespace)
+from typing import Final, Optional, Set
+
+LETTER_SET: Final[Set[str]] = set(ascii_letters)
+LOWERCASE_SET: Final[Set[str]] = set(ascii_lowercase)
+UPPERCASE_SET: Final[Set[str]] = set(ascii_uppercase)
+DIGIT_SET: Final[Set[str]] = set(digits)
+PUNCTUATION_SET: Final[Set[str]] = set(punctuation)
+WHITESPACE_SET: Final[Set[str]] = set(whitespace)
 ALPHANUMERIC_SET: Final[Set[str]] = LETTER_SET | DIGIT_SET
 
 def levenshtein(a:str, b:str) -> int:
+    """Find the levenshtein distance between two strings"""
+
     if not len(a):
         return len(b)
     if not len(b):
@@ -23,7 +31,17 @@ def levenshtein(a:str, b:str) -> int:
     )
 
 
-def adjacent_strings(string:str,char_set:Set[str]=LETTER_SET,removal:bool=True,addition:bool=True,substitution:bool=False,transpositions:bool=False):
+def adjacent_strings(string:str,char_set:Optional[Set[str]]=None,
+                     removal:bool=True,addition:bool=True,
+                     substitution:bool=False,transpositions:bool=False):
+    """
+    Returns all strings which are one edit-distance from an initial string
+    Optionally enable/disable character removal, addition, substitution, or transposition
+    Specify a set of characters
+    """
+
+    if char_set is None:
+        char_set = LETTER_SET
     rv = []
     if removal:
         for i in range(len(string)):
@@ -37,7 +55,7 @@ def adjacent_strings(string:str,char_set:Set[str]=LETTER_SET,removal:bool=True,a
             for char in char_set:
                 rv += [string[:i] + char + string[i+1:]]
     if transpositions:
-        for i in range(len(string)):
+        for i,_ in enumerate(string):
             for j in range(i+1,len(string)):
                 rv += [string[:i] + string[j] + string[i+1:j] + string[i] + string[j+1:]]
     return rv
