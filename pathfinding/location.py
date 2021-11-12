@@ -3,10 +3,10 @@
 
 from enum import Enum
 
-from ..geometry import Point
+from ..geometry import LatticePoint
 
 
-class Location(Point):
+class Location(LatticePoint):
     """A class used to represent 2D locations"""
 
     OPEN = 0
