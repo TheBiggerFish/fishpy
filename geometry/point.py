@@ -1,18 +1,35 @@
 """This module provides a class for storing points on an x-y plane"""
 
 from random import uniform
-from typing import Final, Iterable, List, Optional, Tuple, Union
+from typing import Final, Iterable, List, Optional, Tuple
 
-Number = Union[float,int]
 
 class Point:
     """
     This class can be used to represent and evaluate points on an x-y plane
     """
 
-    def __init__(self,x:Number,y:Number):
-        self.x = x
-        self.y = y
+    def __init__(self,x:float,y:float):
+        self._x = x
+        self._y = y
+
+    @property
+    def x(self) -> float:
+        """This property represents the x-value of self"""
+        return self._x
+
+    @x.setter
+    def x(self,x:float):
+        self._x = x
+
+    @property
+    def y(self) -> float:
+        """This property represents the y-value of self"""
+        return self._y
+
+    @y.setter
+    def y(self,y:float):
+        self._y = y
 
     def __add__(self,other:'Point') -> 'Point':
         return Point(self.x+other.x,self.y+other.y)
@@ -83,17 +100,6 @@ class Point:
             points = filter(lambda x: x < upper_bound, points)
         return list(points)
 
-    def get_adjacent_points(self,diagonals:bool=False,
-                            lower_bound:Optional['Point']=None,
-                            upper_bound:Optional['Point']=None) -> list:
-        """Returns the adjacent lattice points of a given point"""
-
-        adj = [Point(0,1),Point(0,-1),Point(1,0),Point(-1,0)]
-        if diagonals:
-            adj += [Point(1,1),Point(-1,-1),Point(1,-1),Point(-1,1)]
-        adj = [self + p for p in adj]
-        return Point.bounded_filter(adj,lower_bound,upper_bound)
-
     def in_bounds(self,lower_bound:'Point',upper_bound:'Point') -> bool:
         """
         Returns whether a point lies within the rectangle between two points
@@ -123,22 +129,6 @@ class Point:
     def is_right_of(self,other:'Point') -> bool:
         """Predicate function which returns whether self is right of other"""
         return self.x > other.x
-
-    def up(self) -> 'Point':
-        """Returns the point one above self"""
-        return self + Point(0,1)
-
-    def down(self) -> 'Point':
-        """Returns the point one below self"""
-        return self + Point(0,-1)
-
-    def left(self) -> 'Point':
-        """Returns the point one left of self"""
-        return self + Point(-1,0)
-
-    def right(self) -> 'Point':
-        """Returns the point one right of self"""
-        return self + Point(1,0)
 
     @staticmethod
     def random(lower_bound:'Point',upper_bound:'Point') -> 'Point':
