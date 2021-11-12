@@ -1,8 +1,15 @@
+"""
+This module provides a class for storing points which lie in n-dimensional
+space
+"""
+
 from itertools import product as cartesian
 from typing import Callable, Iterable, List, Optional, Union
 
 
 class PointND:
+    """Class for storing points which lie in n-dimensional space"""
+
     def __init__(self,initial_values:Iterable[Union[int,float]]):
         self._dim = len(initial_values)
         if self._dim == 0:
@@ -29,9 +36,11 @@ class PointND:
 
     @staticmethod
     def zeros(dimensions:int) -> 'PointND':
+        """Returns the origin of an n-dimensional space"""
         return PointND([0]*dimensions)
 
     def copy(self) -> 'PointND':
+        """Returns a shallow copy of self"""
         return PointND(self._coords[:])
 
     def __add__(self,other:'PointND') -> 'PointND':
@@ -78,6 +87,7 @@ class PointND:
 
     @property
     def dim(self) -> int:
+        """Property representing the dimensionality of self"""
         return self._dim
 
     def _assert_dimension(self,dim:int,coord:str) -> None:
@@ -85,7 +95,14 @@ class PointND:
             raise IndexError(f'{self._dim} dimensional points do not '\
                 f'have a <{coord}> coordinate, required dim >= {dim}')
 
-    def get_adjacent_points(self,filter_function:Optional[Callable[['PointND'],bool]]=None) -> List['PointND']:
+    def get_adjacent_points(self,
+                            filter_function:Optional[Callable[['PointND'],bool]]=None
+                            ) -> List['PointND']:
+        """
+        Returns the adjacent lattice points of a given point, optionally
+        filtering out points with filter_function
+        """
+
         self_rel = tuple([0]*self._dim)
         adj = list(cartesian([-1,0,1],repeat=self._dim))
         adj = [PointND(pt)+self for pt in adj if pt != self_rel]
@@ -95,6 +112,7 @@ class PointND:
 
     @property
     def x(self) -> Union[int,float]:
+        """Returns the value in the first dimension"""
         self._assert_dimension(1,'x')
         return self._coords[0]
 
@@ -105,6 +123,7 @@ class PointND:
 
     @property
     def y(self) -> Union[int,float]:
+        """Returns the value in the second dimension"""
         self._assert_dimension(2,'y')
         return self._coords[1]
 
@@ -115,6 +134,7 @@ class PointND:
 
     @property
     def z(self) -> Union[int,float]:
+        """Returns the value in the third dimension"""
         self._assert_dimension(3,'z')
         return self._coords[2]
 
@@ -125,6 +145,7 @@ class PointND:
 
     @property
     def w(self) -> Union[int,float]:
+        """Returns the value in the fourth dimension"""
         self._assert_dimension(4,'w')
         return self._coords[3]
 

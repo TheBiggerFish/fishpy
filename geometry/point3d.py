@@ -1,9 +1,13 @@
+"""This module provides a class for storing points which lie in 3-space"""
+
 from typing import List, Optional, Union
 
 from .point import Point
 
 
 class Point3D(Point):
+    """Class for storing points which lie in 3-space"""
+
     def __init__(self,x:Union[int,float],y:Union[int,float],z:Union[int,float]):
         super().__init__(x,y)
         self.z = z
@@ -30,10 +34,17 @@ class Point3D(Point):
         return f'({self.x},{self.y},{self.z})'
 
     def copy(self) -> 'Point3D':
+        """Returns a shallow copy of self"""
         return Point3D(self.x,self.y,self.z)
 
-    def get_adjacent_points(self,diagonals:bool=False,lower_bound:Optional['Point3D']=None,upper_bound:Optional['Point3D']=None) -> List['Point3D']:
-        adj = [Point3D(0,1,0),Point3D(0,-1,0),Point3D(1,0,0),Point3D(-1,0,0),Point3D(0,0,1),Point3D(0,0,-1)]
+    def get_adjacent_points(self,diagonals:bool=False,
+                            lower_bound:Optional['Point3D']=None,
+                            upper_bound:Optional['Point3D']=None) -> List['Point3D']:
+        """Returns the adjacent lattice points of a given point"""
+
+        adj = [Point3D(1,0,0),Point3D(-1,0,0),
+               Point3D(0,1,0),Point3D(0,-1,0),
+               Point3D(0,0,1),Point3D(0,0,-1)]
         if diagonals:
             adj += [Point3D(1,1,0),Point3D(-1,-1,0),Point3D(1,-1,0),Point3D(-1,1,0),
                     Point3D(1,0,1),Point3D(-1,0,-1),Point3D(1,0,-1),Point3D(-1,0,1),
@@ -41,8 +52,4 @@ class Point3D(Point):
             adj += [Point3D(1,1,1),Point3D(1,1,-1),Point3D(1,-1,1),Point3D(1,-1,-1),
                     Point3D(-1,1,1),Point3D(-1,1,-1),Point3D(-1,-1,1),Point3D(-1,-1,-1)]
         adj = [self + p for p in adj]
-        if lower_bound is not None:
-            adj = filter(lambda x: lower_bound <= x, adj)
-        if upper_bound is not None:
-            adj = filter(lambda x: x < upper_bound, adj)
-        return list(adj)
+        return Point.bounded_filter(adj,lower_bound,upper_bound)

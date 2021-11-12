@@ -1,3 +1,5 @@
+"""This module provides a class for storing and evaluating lines"""
+
 from math import isclose
 from typing import Optional, Set
 
@@ -6,6 +8,8 @@ from .point import Point
 
 
 class Line:
+    """Class for storing and evaluating lines"""
+
     def __init__(self,y_int:float,slope:float,vertical:bool=False,x_int:Optional[float]=None):
         self.vertical = vertical
         self.x_int = x_int
@@ -21,6 +25,8 @@ class Line:
 
     @staticmethod
     def extend_segment(segment:LineSegment) -> 'Line':
+        """Returns a line by extending an existing line segment"""
+
         if segment.get_run() == 0:
             return Line.new_vertical(segment.p1.x)
         slope = segment.get_rise() / segment.get_run()
@@ -28,11 +34,16 @@ class Line:
         return Line(y_int,slope)
 
     def get_y(self,x:float) -> float:
+        """Returns the y-value of self at x-value"""
         return self.slope * x + self.y_int
 
     def integer_points_along(self,lower_bound:Point,upper_bound:Point) -> Set[Point]:
-        points = set()
+        """
+        Find all lattice points lying within the rectangle created by
+        lower_bound and upper_bound
+        """
 
+        points = set()
         if self.vertical and lower_bound.x <= self.x_int <= upper_bound.x:
             for y in range(lower_bound.y, upper_bound.y+1):
                 points.add(Point(self.x_int,y))
@@ -47,15 +58,19 @@ class Line:
         return points
 
     def contains_point(self,point:Point) -> bool:
+        """Predicate function which returns whether point lies on self"""
         if self.vertical:
             return self.x_int == point.x
         return isclose(self.get_y(point.x),point.y,abs_tol=10**-6)
 
     @staticmethod
     def new_vertical(x:float) -> 'Line':
+        """Create a new vertical line at x"""
         return Line(None, float('inf'), True, x)
 
     def perpendicular(self,intersection:Point) -> 'Line':
+        """Returns a line which is perpendicular to self at a given point"""
+
         if not self.contains_point(intersection):
             raise ValueError('Intersection point must lie on line')
 
@@ -68,8 +83,18 @@ class Line:
         new_y_int = intersection.y - new_slope * intersection.x
         return Line(new_y_int,new_slope)
 
+    def reflect_point(self,p:Point) -> Point:
+        """Reflect p across self"""
+
+        if self.vertical:
+            return Point(2*self.x_int-p.x,p.y)
+        u=((1-self.slope**2)*p.x + 2*self.slope*p.y - 2*self.slope*self.y_int)/((self.slope**2)+1)
+        v=((self.slope**2 - 1)*p.y + 2*self.slope*p.x + 2*self.y_int)/((self.slope**2) + 1)
+        return Point(u, v)
+
     @property
     def y_int(self) -> float:
+        """Property representing the y-intercept of self"""
         return self.__y_int
 
     @y_int.setter

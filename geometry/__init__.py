@@ -1,4 +1,7 @@
-# pylint: disable=missing-module-docstring
+"""
+This module provides a selection of classes pertaining to shapes and
+geometric concepts
+"""
 
 from .circle import Circle
 from .corner import Corner

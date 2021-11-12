@@ -1,9 +1,15 @@
+"""This module provides a class for storing and evaluating line segments"""
+
+from typing import Optional
+
 import numpy as np
 
 from .point import Point
 
 
 class LineSegment:
+    """Class for storing and evaluating line segments"""
+
     def __init__(self,p1:Point,p2:Point):
         if p1 == p2:
             raise ValueError('Points cannot have same value in a line segment')
@@ -14,25 +20,31 @@ class LineSegment:
         return '({},{})'.format(self.p1,self.p2)
 
     def get_rise(self) -> float:
+        """Returns the change in y-value"""
         left = self.p1 if self.p1.x < self.p2.x else self.p2
         right = self.p2 if self.p1.x < self.p2.x else self.p1
         return right.y - left.y
 
     def get_run(self) -> float:
+        """Returns the change in x-value"""
         left = self.p1 if self.p1.x < self.p2.x else self.p2
         right = self.p2 if self.p1.x < self.p2.x else self.p1
         return right.x - left.x
 
     def get_length(self) -> float:
+        """Returns the length of the line"""
         return (self.get_rise()**2 + self.get_run()**2)**0.5
 
     def is_parallel_to(self,other:'LineSegment') -> bool:
+        """Predicate function which returns whether two line segments are parallel"""
         delta_x = (self.get_run(),other.get_run())
         delta_y = (self.get_rise(),other.get_rise())
         return np.linalg.det(np.array((delta_x,delta_y))) == 0
 
+    # https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
     def intersects(self,other:'LineSegment') -> bool:
-        # https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+        """Predicate function which returns whether two line segments intersect"""
+
         def ccw(A:Point,B:Point,C:Point) -> bool:
             return (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x)
         return ccw(self.p1,other.p1,other.p2) \
@@ -40,7 +52,9 @@ class LineSegment:
                 and ccw(self.p1,self.p2,other.p1) \
                     != ccw(self.p1,self.p2,other.p2)
 
-    def intersection(self,other:'LineSegment') -> Point:
+    def intersection(self,other:'LineSegment') -> Optional[Point]:
+        """Returns the intersection point of two lines, or none if no intersection point"""
+
         if self.is_parallel_to(other):
             return None
 
