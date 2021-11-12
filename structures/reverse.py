@@ -1,8 +1,14 @@
+"""
+This module provides a class to be used in reversing the sorting direction of the payload object
+"""
+
 from typing import Generic, TypeVar
 
 T = TypeVar('T')
 
 class Reverse(Generic[T]):
+    """This class reverses the sorting direction of the payload object"""
+
     def __init__(self,payload:T):
         self.payload = payload
 

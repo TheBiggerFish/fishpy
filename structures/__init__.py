@@ -1,4 +1,4 @@
-# pylint: disable=missing-module-docstring
+"""This module contains a collection of structural classes"""
 
 from .cycle import Cycle
 from .linkedlist import LinkedList

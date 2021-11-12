@@ -1,3 +1,7 @@
+"""
+This module provides an implementation of priority queue which can be set to
+min or max. The sorting direction cannot be changed after creation.
+"""
 
 import heapq
 from queue import PriorityQueue
@@ -8,9 +12,11 @@ from .reverse import Reverse
 T = TypeVar('T')
 
 class ReversiblePriorityQueue(PriorityQueue,Generic[T]):
+    """An implementation of priority queue which can be set to min or max"""
+
     def __init__(self,max_:bool=False):
         super().__init__()
-        self.max = max_
+        self._max = max_
 
     def __contains__(self,item) -> bool:
         return item in self.queue
@@ -24,13 +30,9 @@ class ReversiblePriorityQueue(PriorityQueue,Generic[T]):
     def _get(self) -> T:
         if self.max:
             return heapq.heappop(self.queue).payload
-        else:
-            return heapq.heappop(self.queue)
+        return heapq.heappop(self.queue)
 
     @property
     def max(self) -> bool:
+        """This property represents the boolean sort-direction option"""
         return self._max
-
-    @max.setter
-    def max(self,val:bool) -> None:
-        self._max = val
