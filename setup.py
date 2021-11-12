@@ -21,8 +21,9 @@ setuptools.setup(
         'Operating System :: OS Independent',
     ],
     install_requires=[
-        'networkx',
+        'numpy',
         'sympy',
+        'networkx',
         'multiset',
     ],
     python_requires='>=3.6',
