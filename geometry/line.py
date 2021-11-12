@@ -18,10 +18,10 @@ class Line:
 
     def __str__(self) -> str:
         if self.vertical:
-            return 'x = {}'.format(self.x_int)
+            return f'x = {self.x_int}'
         slope = int(self.slope) if float(self.slope).is_integer() else self.slope
         y_int = int(self.y_int) if float(self.y_int).is_integer() else self.y_int
-        return 'y = {}x + {}'.format(slope,y_int)
+        return f'y = {slope}x + {y_int}'
 
     @staticmethod
     def extend_segment(segment:LineSegment) -> 'Line':
@@ -76,7 +76,7 @@ class Line:
 
         if self.slope == 0:
             return Line.new_vertical(intersection.x)
-        elif self.vertical:
+        if self.vertical:
             return Line(intersection.y,0)
 
         new_slope = -1/self.slope

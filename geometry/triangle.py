@@ -15,7 +15,7 @@ class Triangle:
         self.p3 = p3
 
     def __contains__(self,pt:Point):
-        return pt == self.p1 or pt == self.p2 or pt == self.p3
+        return pt in (self.p1,self.p2,self.p3)
 
     def __str__(self) -> str:
         return f'{str(self.p1)},{str(self.p2)},{str(self.p3)}'

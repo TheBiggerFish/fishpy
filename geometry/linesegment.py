@@ -17,7 +17,7 @@ class LineSegment:
         self.p2 = p2
 
     def __str__(self) -> str:
-        return '({},{})'.format(self.p1,self.p2)
+        return f'({self.p1},{self.p2})'
 
     def get_rise(self) -> float:
         """Returns the change in y-value"""
