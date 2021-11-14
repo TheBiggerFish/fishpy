@@ -3,13 +3,16 @@
 from random import uniform
 from typing import Final, Iterable, List, Optional, Tuple
 
+from .point import Point
 
-class Point2D:
+
+class Point2D(Point):
     """
     This class can be used to represent and evaluate points on an x-y plane
     """
 
     def __init__(self,x:float,y:float):
+        super().__init__((x,y))
         self._x = x
         self._y = y
 
@@ -81,8 +84,8 @@ class Point2D:
         """Returns the actual distance between two points"""
         return ((self.x - other.x)**2 + (self.y - other.y)**2)**0.5
 
-    def midpoint2D(self,other:'Point2D') -> 'Point2D':
-        """Returns the midpoint2D between two points"""
+    def midpoint(self,other:'Point2D') -> 'Point2D':
+        """Returns the midpoint between two points"""
         return (self + other) / 2
 
     @staticmethod
@@ -102,7 +105,7 @@ class Point2D:
 
     def in_bounds(self,lower_bound:'Point2D',upper_bound:'Point2D') -> bool:
         """
-        Returns whether a point2D lies within the rectangle between two points
+        Returns whether a point lies within the rectangle between two points
         """
         return lower_bound <= self < upper_bound
 
@@ -132,7 +135,7 @@ class Point2D:
 
     @staticmethod
     def random(lower_bound:'Point2D',upper_bound:'Point2D') -> 'Point2D':
-        """Returns a random point2D which lies in the rectangle between two bounds"""
+        """Returns a random point which lies in the rectangle between two bounds"""
         return Point2D(uniform(lower_bound.x,upper_bound.x),
                      uniform(lower_bound.y,upper_bound.y))
 
