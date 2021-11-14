@@ -88,27 +88,6 @@ class Point2D(Point):
         """Returns the midpoint between two points"""
         return (self + other) / 2
 
-    @staticmethod
-    def bounded_filter(points:Iterable['Point2D'],
-                       lower_bound:Optional['Point2D']=None,
-                       upper_bound:Optional['Point2D']=None) -> List['Point2D']:
-        """
-        Takes an iterable of points, and returns the list of points which lie
-        within a bound
-        """
-
-        if lower_bound is not None:
-            points = filter(lambda x: lower_bound <= x, points)
-        if upper_bound is not None:
-            points = filter(lambda x: x < upper_bound, points)
-        return list(points)
-
-    def in_bounds(self,lower_bound:'Point2D',upper_bound:'Point2D') -> bool:
-        """
-        Returns whether a point lies within the rectangle between two points
-        """
-        return lower_bound <= self < upper_bound
-
     def copy(self) -> 'Point2D':
         """Returns a shallow copy of self"""
         return Point2D(self.x,self.y)
