@@ -1,19 +1,12 @@
 """
-This module provides a set of functions and constants related to strings.
+This module provides a collection of functions to be used in string
+manipulation and processing
 """
 
+from typing import Optional, Set
 
-from string import (ascii_letters, ascii_lowercase, ascii_uppercase, digits,
-                    punctuation, whitespace)
-from typing import Final, Optional, Set
+from .constants import LETTER_SET
 
-LETTER_SET: Final[Set[str]] = set(ascii_letters)
-LOWERCASE_SET: Final[Set[str]] = set(ascii_lowercase)
-UPPERCASE_SET: Final[Set[str]] = set(ascii_uppercase)
-DIGIT_SET: Final[Set[str]] = set(digits)
-PUNCTUATION_SET: Final[Set[str]] = set(punctuation)
-WHITESPACE_SET: Final[Set[str]] = set(whitespace)
-ALPHANUMERIC_SET: Final[Set[str]] = LETTER_SET | DIGIT_SET
 
 def levenshtein(a:str, b:str) -> int:
     """Find the levenshtein distance between two strings"""
