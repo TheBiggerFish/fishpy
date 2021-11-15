@@ -7,7 +7,7 @@ from enum import Enum
 from typing import (Any, Callable, Dict, Final, List, Optional, Set, Tuple,
                     Union)
 
-from .structures import Node
+from ..structures import Node
 
 
 class Operation:
