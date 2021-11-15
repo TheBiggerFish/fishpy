@@ -1,7 +1,7 @@
 """This module provides a class for storing points on an x-y plane"""
 
 from random import uniform
-from typing import Final, Iterable, List, Optional, Tuple
+from typing import Final, Tuple
 
 from .point import Point
 
