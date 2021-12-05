@@ -12,7 +12,8 @@ from .point2d import Point2D
 class Line:
     """Class for storing and evaluating lines"""
 
-    def __init__(self,y_int:Optional[float],slope:float,vertical:bool=False,x_int:Optional[float]=None):
+    def __init__(self,y_int:Optional[float],slope:float,
+                 vertical:bool=False,x_int:Optional[float]=None):
         self.vertical = vertical
         self.x_int = x_int
         self.y_int = y_int
