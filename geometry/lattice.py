@@ -4,10 +4,11 @@ from random import randint
 from typing import Optional
 
 from .point import Point
+from .point2d import Point2D
 from .vector import DOWN, LEFT, RIGHT, UP
 
 
-class LatticePoint(Point):
+class LatticePoint(Point2D):
     """Class for storing points on an x-y lattice plane"""
 
     def __init__(self,x:int,y:int):
@@ -20,20 +21,24 @@ class LatticePoint(Point):
     @property
     def x(self) -> int:
         """This property represents the x-value of self"""
-        return self._x
+        return self._coords[0]
 
     @x.setter
     def x(self,x:int):
-        self._x = int(x)
+        if not isinstance(x,int):
+            raise TypeError('x property of LatticePoint must be of type int')
+        self._coords[0] = x
 
     @property
     def y(self) -> int:
         """This property represents the y-value of self"""
-        return self._y
+        return self._coords[1]
 
     @y.setter
     def y(self,y:int):
-        self._y = int(y)
+        if not isinstance(y,int):
+            raise TypeError('y property of LatticePoint must be of type int')
+        self._coords[1] = y
 
     def __add__(self,other:'LatticePoint') -> 'LatticePoint':
         return LatticePoint(self.x+other.x,self.y+other.y)
@@ -63,11 +68,10 @@ class LatticePoint(Point):
     def __mod__(self,divisor:'LatticePoint') -> 'LatticePoint':
         return LatticePoint(self.x % divisor.x, self.y % divisor.y)
 
-    def manhattan_distance(self,other:'LatticePoint') -> int:
-        """Returns the manhattan distance between two points"""
-        return abs(self.x - other.x) + abs(self.y - other.y)
+    def __abs__(self) -> 'LatticePoint':
+        return LatticePoint(abs(self.x),abs(self.y))
 
-    def midLatticePoint(self,other:'LatticePoint') -> 'LatticePoint':
+    def lattice_midpoint(self,other:'LatticePoint') -> 'LatticePoint':
         """Returns the midpoint between two points"""
         return (self + other) // 2
 
