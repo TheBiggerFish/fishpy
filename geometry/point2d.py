@@ -1,5 +1,6 @@
 """This module provides a class for storing points on an x-y plane"""
 
+from math import ceil, floor
 from random import uniform
 from typing import Final, Tuple
 
@@ -12,27 +13,7 @@ class Point2D(Point):
     """
 
     def __init__(self,x:float,y:float):
-        super().__init__((x,y))
-        self._x = x
-        self._y = y
-
-    @property
-    def x(self) -> float:
-        """This property represents the x-value of self"""
-        return self._x
-
-    @x.setter
-    def x(self,x:float):
-        self._x = x
-
-    @property
-    def y(self) -> float:
-        """This property represents the y-value of self"""
-        return self._y
-
-    @y.setter
-    def y(self,y:float):
-        self._y = y
+        super().__init__(x,y)
 
     def __add__(self,other:'Point2D') -> 'Point2D':
         return Point2D(self.x+other.x,self.y+other.y)
@@ -59,7 +40,7 @@ class Point2D(Point):
         return self.y <= other.y and self.x <= other.x
 
     def __str__(self) -> str:
-        return '(' + str(self.x) + ',' + str(self.y) + ')'
+        return f'({self.x},{self.y})'
 
     def __repr__(self) -> str:
         return f'Point2D{str(self)}'
@@ -75,6 +56,15 @@ class Point2D(Point):
 
     def __mod__(self,divisor:'Point2D') -> 'Point2D':
         return Point2D(self.x % divisor.x, self.y % divisor.y)
+
+    def __abs__(self) -> 'Point2D':
+        return Point2D(abs(self.x),abs(self.y))
+
+    def __floor__(self) -> 'Point2D':
+        return Point2D(floor(self.x),floor(self.y))
+
+    def __ceil__(self) -> 'Point2D':
+        return Point2D(ceil(self.x),ceil(self.y))
 
     def manhattan_distance(self,other:'Point2D') -> float:
         """Returns the manhattan distance between two points"""
