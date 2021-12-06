@@ -47,14 +47,14 @@ class Computer:
         self.pc = initial_pc
         self.regs = registers
 
-    def execute_instruction(self, instruction:Instruction):
+    def execute_instruction(self, instruction:Instruction) -> ProgramCounter:
         """Execute a single instruction on the computer"""
-        self.pc = instruction(self.pc,self.regs)
+        return instruction(self.pc,self.regs)
 
     def execute(self, program:List[Instruction]):
         """Execute a list of instructions until the PC falls outside of range"""
         while 0 <= self.pc < len(program):
-            self.execute_instruction(program[self.pc])
+            self.pc = self.execute_instruction(program[self.pc])
 
     def execute_with_profiler(self,program:List[Instruction],
                               logging_condition:StateCondition=None):
@@ -66,7 +66,7 @@ class Computer:
         profile = {i:0 for i in range(len(program))}
         while 0 <= self.pc < len(program):
             profile[self.pc] += 1
-            self.execute_instruction(program[self.pc])
+            self.pc = self.execute_instruction(program[self.pc])
             if logging_condition is not None and logging_condition(self.pc,self.regs):
                 print(f'Program Counter: {self.pc}, Registers: {self.regs}')
         print('Program profile:',profile)
