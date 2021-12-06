@@ -25,4 +25,4 @@ jobs:
         pylint fishpy --rcfile fishpy/pylintrc
     - name: Analysing tests with pylint
       run: |
-        pylint fishpy/test --rcfile fishpy/test/pylintrc
+        pylint fishpy/test --rcfile fishpy/tests/pylintrc
