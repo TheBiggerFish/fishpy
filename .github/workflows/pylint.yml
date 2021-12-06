@@ -23,3 +23,6 @@ jobs:
       run: |
         cd ..
         pylint fishpy --rcfile fishpy/pylintrc
+    - name: Analysing tests with pylint
+      run: |
+        pylint fishpy/test --rcfile fishpy/test/pylintrc
