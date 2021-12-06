@@ -26,5 +26,5 @@ setuptools.setup(
         'networkx',
         'multiset',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
 )
