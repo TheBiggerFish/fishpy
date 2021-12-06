@@ -201,7 +201,9 @@ class TestPoint2dMethods(unittest.TestCase):
 
 
     def test_random(self):
-        self.assertTrue(Point2D.random(lower_bound=self.p1,upper_bound=Point2D(5,5)).in_bounds(self.p1,Point2D(6,6)))
+        self.assertTrue(Point2D.random(lower_bound=self.p1,
+                                       upper_bound=Point2D(5,5)
+        ).in_bounds(self.p1,Point2D(6,6)))
 
 
 if __name__ == '__main__':
