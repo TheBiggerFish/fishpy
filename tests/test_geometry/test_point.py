@@ -69,7 +69,7 @@ class TestPointDunderMethods(unittest.TestCase):
         self.assertEqual(repr(self.p2),'Point(1, -5)')
         self.assertEqual(repr(self.p3),'Point(0, 2)')
         self.assertEqual(repr(self.p4),'Point(-3, 5)')
-    
+
     def test_mul(self):
         self.assertEqual(self.p1*3,Point(3,3))
         self.assertEqual(self.p2*-1,Point(-1,5))
@@ -110,7 +110,7 @@ class TestPointMethods(unittest.TestCase):
         self.p2 = Point(1,-5)
         self.p3 = Point(0,2)
         self.p4 = Point(-3,5)
-        
+
     def test_copy(self):
         self.p2 = self.p1.copy()
         self.assertEqual(self.p2,self.p1)
@@ -151,7 +151,9 @@ class TestPointMethods(unittest.TestCase):
         self.assertSequenceEqual(self.p4.as_tuple(),(-3,5))
 
     def test_random(self):
-        self.assertTrue(Point.random(lower_bound=self.p1,upper_bound=Point(5,5)).in_bounds(self.p1,Point(5,5)))
+        self.assertTrue(Point.random(lower_bound=self.p1,
+                                     upper_bound=Point(5,5)
+                                    ).in_bounds(self.p1,Point(5,5)))
 
 
 if __name__ == '__main__':
