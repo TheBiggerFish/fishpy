@@ -25,6 +25,5 @@ jobs:
         pylint fishpy --rcfile fishpy/pylintrc
     - name: Analysing tests with pylint
       run: |
-        pwd
         cd ..
         pylint fishpy/tests --rcfile fishpy/tests/pylintrc

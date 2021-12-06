@@ -6,7 +6,8 @@ from fishpy.computer import Instruction, Operand, Operation, ProgramCounter
 
 class TestInstructionMethods(unittest.TestCase):
     def setUp(self):
-        def inc_func(arguments:List[str],registers:Dict[str,Any],pc:ProgramCounter) -> ProgramCounter:
+        def inc_func(arguments:List[str],registers:Dict[str,Any],
+                     pc:ProgramCounter) -> ProgramCounter:
             registers[arguments[0]] += 1
             return pc+1
 
@@ -27,7 +28,7 @@ class TestInstructionMethods(unittest.TestCase):
 class TestComputerMethods(unittest.TestCase):
     def setUp(self):
         pass
-    
+
     def test_execute_instruction(self):
         pass
 
