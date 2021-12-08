@@ -5,7 +5,7 @@ from typing import Optional
 
 from .point import Point
 from .point2d import Point2D
-from .vector import DOWN, LEFT, RIGHT, UP
+from .vector2d import DOWN, LEFT, RIGHT, UP
 
 
 class LatticePoint(Point2D):
@@ -60,7 +60,7 @@ class LatticePoint(Point2D):
     def __truediv__(self,scalar:int) -> 'LatticePoint':
         if self.x % scalar != 0 or self.y % scalar != 0:
             raise ValueError('Division scalar creates point not on lattice')
-        return self.__floordiv__(scalar)
+        return self // scalar
 
     def __floordiv__(self,scalar:int) -> 'LatticePoint':
         return LatticePoint(self.x//scalar,self.y//scalar)
@@ -109,6 +109,11 @@ class LatticePoint(Point2D):
 
     @staticmethod
     def random(lower_bound:'LatticePoint',upper_bound:'LatticePoint') -> 'LatticePoint':
-        """Returns a random point which lies in the rectangle between two bounds"""
-        return LatticePoint(randint(lower_bound.x+1,upper_bound.x),
-                            randint(lower_bound.y+1,upper_bound.y))
+        """
+        Returns a random point which lies in the rectangle between two bounds
+
+        lower_bound is inclusive
+        upper_bound is exclusive
+        """
+        return LatticePoint(randint(lower_bound.x,upper_bound.x),
+                            randint(lower_bound.y,upper_bound.y))

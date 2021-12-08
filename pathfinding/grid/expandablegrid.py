@@ -2,7 +2,7 @@
 This module provides an extension of Grid which can be expanded in every direction
 """
 
-from fishpy.geometry import Vector
+from ...geometry import Vector2D
 
 from ..location import Location
 from .grid import Grid
@@ -69,7 +69,7 @@ class ExpandableGrid(Grid):
             for x in range(low_x,low_x+steps):
                 self.grid[y] = self.grid[y] + [Location(x,self._offset.y+y,Location.OPEN,fill_char)]
 
-    def shift(self,step:Vector) -> None:
+    def shift(self,step:Vector2D) -> None:
         """Translate the entire grid in the direction of the step vector"""
 
         for pt in self:

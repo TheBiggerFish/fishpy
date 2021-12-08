@@ -1,6 +1,5 @@
 """This module provides a class for storing and evaluating angles/corners"""
 
-from functools import cached_property
 from math import acos, degrees, isclose
 
 from .linesegment import LineSegment

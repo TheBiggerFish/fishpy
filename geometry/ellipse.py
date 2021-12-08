@@ -8,7 +8,6 @@ from .circle import Circle
 from .corner import Corner
 from .linesegment import LineSegment
 from .point2d import Point2D
-from .vector2d import Vector2D
 
 
 class Ellipse:

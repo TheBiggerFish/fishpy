@@ -5,6 +5,7 @@ from random import uniform
 from typing import Final, Tuple
 
 from .point import Point
+from .vector2d import Vector2D
 
 
 class Point2D(Point):
@@ -15,11 +16,11 @@ class Point2D(Point):
     def __init__(self,x:float,y:float):
         super().__init__(x,y)
 
-    def __add__(self,other:'Point2D') -> 'Point2D':
+    def __add__(self,other:Vector2D) -> 'Point2D':
         return Point2D(self.x+other.x,self.y+other.y)
 
-    def __sub__(self,other:'Point2D') -> 'Point2D':
-        return Point2D(self.x-other.x,self.y-other.y)
+    def __sub__(self,other:'Point2D') -> Vector2D:
+        return Vector2D(self.x-other.x,self.y-other.y)
 
     def __neg__(self) -> 'Point2D':
         return Point2D(-self.x,-self.y)
@@ -27,17 +28,20 @@ class Point2D(Point):
     def __eq__(self,other:'Point2D') -> bool:
         return self.x == other.x and self.y == other.y
 
-    def __hash__(self) -> int:
-        return hash(str(self.x * (10**10) + self.y))
+    def __ne__(self,other:'Point2D') -> bool:
+        return self.x != other.x or self.y != other.y
 
     def __lt__(self,other:'Point2D') -> bool:
         return self.y < other.y and self.x < other.x
 
     def __gt__(self,other:'Point2D') -> bool:
-        return not self < other and not self == other
+        return not self <= other
 
     def __le__(self,other:'Point2D') -> bool:
         return self.y <= other.y and self.x <= other.x
+
+    def __ge__(self,other:'Point2D') -> bool:
+        return not self < other
 
     def __str__(self) -> str:
         return f'({self.x},{self.y})'
@@ -65,6 +69,9 @@ class Point2D(Point):
 
     def __ceil__(self) -> 'Point2D':
         return Point2D(ceil(self.x),ceil(self.y))
+
+    def __hash__(self) -> int:
+        return hash(self.as_tuple())
 
     def manhattan_distance(self,other:'Point2D') -> float:
         """Returns the manhattan distance between two points"""
