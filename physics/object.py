@@ -2,14 +2,15 @@
 This module provides a class to represent physics objects
 """
 
-from .geometry import Point, Vector
+from ..geometry import Point
+from ..geometry import Vector2D
 
 
 class Object:
     """This class is used to represent objects with physics"""
     def __init__(self,position:Point=Point(0,0),
-                 velocity:Vector=Vector(0,0),
-                 acceleration:Vector=Vector(0,0),
+                 velocity:Vector2D=Vector2D(0,0),
+                 acceleration:Vector2D=Vector2D(0,0),
                  update_position_first:bool=True):
         self.position = position
         self.velocity = velocity
