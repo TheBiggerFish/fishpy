@@ -29,6 +29,3 @@ class TestCornerMethods(unittest.TestCase):
         self.assertAlmostEqual(self.corner4.get_angle(),45)
         self.assertAlmostEqual(self.corner5.get_angle(),63.43495)
         self.assertAlmostEqual(self.corner6.get_angle(),180)
-
-
-

@@ -77,4 +77,3 @@ class TestCircleMethods(unittest.TestCase):
         self.assertIsNone(self.circle1.intersecting_points(self.circle5))
         self.assertTupleEqual(self.circle2.intersecting_points(self.circle3),
                               (Point2D(2.5,-4.33012702),Point2D(2.5,4.33012702)))
-
