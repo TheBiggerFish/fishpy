@@ -1,7 +1,5 @@
 """This module contains function decorators to use in debugging"""
 
-# Shamelessly stolen from https://tech.serhatteker.com/post/2019-07/python-debug-decorators/
-
 import cProfile
 import functools
 import io

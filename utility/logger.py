@@ -8,11 +8,15 @@ from typing import Optional
 
 
 class Logger(logging.Logger):
-    """Class to simplify logging configuration"""
+    """
+    Class to simplify logging configuration
 
-    def __init__(self, name:str, host:Optional[str]=None,
+    Logs to stdout if no host provided
+    """
+
+    def __init__(self, service_name:str, host:Optional[str]=None,
                  port:str='514', level:str='INFO'):
-        super().__init__(name)
+        super().__init__(service_name)
 
         if host is None:
             handler = logging.StreamHandler(sys.stdout)
