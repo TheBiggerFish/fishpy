@@ -4,13 +4,13 @@ from functools import cached_property
 from math import acos, degrees, isclose
 
 from .linesegment import LineSegment
-from .point import Point
+from .point2d import Point2D
 
 
 class Corner:
     """Class for storing and evaluating angles/corners"""
 
-    def __init__(self, vertex:Point, p1:Point, p2:Point):
+    def __init__(self, vertex:Point2D, p1:Point2D, p2:Point2D):
         self.vertex = vertex
         self.p1 = p1
         self.p2 = p2
@@ -21,21 +21,13 @@ class Corner:
         leg1 = LineSegment(self.vertex,self.p1)
         leg2 = LineSegment(self.vertex,self.p2)
 
-        a = (leg1.p1.x - leg1.p2.x, leg1.p1.y - leg1.p2.y)
-        b = (leg2.p1.x - leg2.p2.x, leg2.p1.y - leg2.p2.y)
-
-        area = leg1.get_length() * leg2.get_length()
+        a = (leg1.p2.x - leg1.p1.x, leg1.p2.y - leg1.p1.y)
+        b = (leg2.p2.x - leg2.p1.x, leg2.p2.y - leg2.p1.y)
 
         dot = a[0] * b[0] + a[1] * b[1]
-        return round(degrees(acos(dot/area)),5)
 
-    @cached_property
-    def angle(self):
-        """
-        Returns the cached angle of the corner, cache must be
-        invalidated if any component points are updated
-        """
-        return self.get_angle()
+        area = leg1.get_length() * leg2.get_length()
+        return round(degrees(acos(dot/area)),5)
 
     def is_right(self) -> bool:
         """

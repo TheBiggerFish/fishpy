@@ -4,14 +4,15 @@ from functools import cached_property
 from math import pi
 from typing import Optional, Tuple
 
-from .point import Point
+from .vector2d import Vector2D
+from .point2d import Point2D
 
 
 class Circle:
     """This class stores and provides methods for evaluating circles"""
-    def __init__(self,center:Point,radius:float):
+    def __init__(self,center:Point2D,radius:float):
         self.center = center
-        self._radius = radius
+        self.radius = radius
 
     @cached_property
     def diameter(self):
@@ -28,7 +29,10 @@ class Circle:
         """This property calculates the area of the circle"""
         return pi * self.radius ** 2
 
-    def __contains__(self,pt:Point) -> bool:
+    def __repr__(self) -> str:
+        return f'Circle({repr(self.center)},{self._radius})'
+
+    def __contains__(self,pt:Point2D) -> bool:
         return self.center.euclidean_distance(pt) <= self.radius
 
     def intersects(self,other:'Circle') -> bool:
@@ -45,26 +49,30 @@ class Circle:
 
     # Find intersection points on two arcs:
     #  https://stackoverflow.com/questions/47863261/find-point-of-intersection-between-two-arc
-    def intersecting_points(self,other:'Circle') -> Optional[Tuple[Point,Point]]:
-        """Returns the intersecting points of two circles"""
+    def intersecting_points(self,other:'Circle') -> Optional[Tuple[Point2D]]:
+        """Returns the intersecting point(s) of two circles"""
 
         other:Circle = other
-        if self.center == other.center:
-            raise ValueError('Intersecting circles cannot share the same center')
+        if self.center == other.center and self.radius == other.radius:
+            raise ValueError('Intersecting circles of the same size '
+                             'cannot share the same center')
 
         if not self.intersects(other):
             return None
 
-        d = (self.center - other.center).magnitude()
+        d = Vector2D.from_point(self.center - other.center).magnitude()
         a = (self.radius**2-other.radius**2+d**2)/(2*d)
         h = (self.radius**2-a**2)**0.5
 
         p2 = self.center + (other.center-self.center) * a/d
-        x3 = round(p2.x + (other.center.y-self.center.y)*h/d,8)
-        y3 = round(p2.y - (other.center.x-self.center.x)*h/d,8)
-        x4 = round(p2.x - (other.center.y-self.center.y)*h/d,8)
-        y4 = round(p2.y + (other.center.x-self.center.x)*h/d,8)
-        return Point(x3,y3),Point(x4,y4)
+        p3,p4 = Point2D(0,0),Point2D(0,0)
+        p3.x = round(p2.x + (other.center.y-self.center.y)*h/d,8)
+        p3.y = round(p2.y - (other.center.x-self.center.x)*h/d,8)
+        p4.x = round(p2.x - (other.center.y-self.center.y)*h/d,8)
+        p4.y = round(p2.y + (other.center.x-self.center.x)*h/d,8)
+        if p3 == p4:
+            return p3,
+        return p3,p4
 
     @property
     def radius(self):
@@ -72,11 +80,14 @@ class Circle:
         return self._radius
 
     @radius.setter
-    def radius(self,radius):
+    def radius(self,radius:float):
         """
         Set the radius property of the circle, invalidate caches
         which depend on radius
         """
+
+        if radius < 0:
+            raise ValueError('Circle\'s radius cannot be negative')
 
         # Invalidate diameter cache
         try:
