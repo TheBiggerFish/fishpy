@@ -44,8 +44,7 @@ class LineSegment:
         """Returns the change in y-value"""
         if self.get_run() == 0:
             return self.high_point().y - self.low_point().y
-        else:
-            return self.right_point().y - self.left_point().y
+        return self.right_point().y - self.left_point().y
 
     def get_run(self) -> float:
         """Returns the change in x-value"""
