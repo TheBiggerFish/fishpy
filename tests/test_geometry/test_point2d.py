@@ -2,6 +2,15 @@ import unittest
 import math
 
 from fishpy.geometry import Point2D
+from fishpy.geometry import Vector2D
+
+class TestPoint2dStaticMethods(unittest.TestCase):
+    def setUp(self):
+        self.p1 = Point2D(1,1)
+
+    def test_random(self):
+        random_point = Point2D.random(lower_bound=self.p1,upper_bound=Point2D(5,5))
+        self.assertTrue(random_point.in_bounds(self.p1,Point2D(6,6)))
 
 
 class TestPoint2dDunderMethods(unittest.TestCase):
@@ -18,10 +27,10 @@ class TestPoint2dDunderMethods(unittest.TestCase):
         self.assertEqual(self.p1+self.p3,Point2D(1,3))
 
     def test_sub(self):
-        self.assertEqual(self.p1-self.p1,Point2D(0,0))
-        self.assertEqual(self.p3-self.p2,Point2D(-1,7))
-        self.assertEqual(self.p4-self.p2,Point2D(-4,10))
-        self.assertEqual(self.p1-self.p3,Point2D(1,-1))
+        self.assertEqual(self.p1-self.p1,Vector2D(0,0))
+        self.assertEqual(self.p3-self.p2,Vector2D(-1,7))
+        self.assertEqual(self.p4-self.p2,Vector2D(-4,10))
+        self.assertEqual(self.p1-self.p3,Vector2D(1,-1))
 
     def test_neg(self):
         self.assertEqual(-self.p1,Point2D(-1,-1))
@@ -52,8 +61,8 @@ class TestPoint2dDunderMethods(unittest.TestCase):
     def test_gt(self):
         self.assertFalse(Point2D(0,0) > self.p1)
         self.assertFalse(Point2D(-3,0) > self.p3)
-        self.assertTrue(Point2D(0,1) > self.p3)
-        self.assertTrue(Point2D(-3,6) > self.p4)
+        self.assertTrue(Point2D(0.5,2.5) > self.p3)
+        self.assertTrue(Point2D(-2,6) > self.p4)
         self.assertFalse(self.p1 > self.p1)
 
     def test_le(self):
@@ -106,7 +115,6 @@ class TestPoint2dDunderMethods(unittest.TestCase):
         self.assertEqual(self.p2//1,Point2D(1,-5))
         self.assertEqual(self.p3//4,Point2D(0,0))
         self.assertEqual(self.p4//-1,Point2D(3,-5))
-        self.assertRaises(ZeroDivisionError,Point2D.__truediv__,self.p1,0)
 
     def test_mod(self):
         self.assertEqual(self.p1 % Point2D(5,5),self.p1)
@@ -198,10 +206,6 @@ class TestPoint2dMethods(unittest.TestCase):
         self.assertFalse(self.p2.is_right_of(self.p1))
         self.assertTrue(self.p3.is_right_of(self.p4))
         self.assertTrue(self.p4.is_right_of(Point2D(-10,0)))
-
-    def test_random(self):
-        random_point = Point2D.random(lower_bound=self.p1,upper_bound=Point2D(5,5))
-        self.assertTrue(random_point.in_bounds(self.p1,Point2D(6,6)))
 
 
 if __name__ == '__main__':
