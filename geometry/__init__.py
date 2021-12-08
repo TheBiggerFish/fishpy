@@ -13,4 +13,4 @@ from .point import Point
 from .point2d import ORIGIN, Point2D
 from .point3d import Point3D
 from .triangle import Triangle
-from .vector import DOWN, LEFT, RIGHT, UP, Vector
+from .vector2d import Vector2D
