@@ -20,6 +20,39 @@ def is_prime(n:int) -> bool:
             return False
     return True
 
+def _witness_test(n:int, d:int, witness:int, exp:int) -> bool:
+    for e in range(exp):
+        result = 1
+        for _ in range(d*(2**e)):
+            result *= witness
+            result %= n
+        if result in (1,n-1):
+            return True
+    return False
+
+def miller_rabin(n:int) -> bool:
+    """Perform the Miller-Rabin test for primality to determine if n is prime"""
+
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+
+    witnesses = (2,3,5,7,11)
+
+    d = n-1
+    exp = 0
+    while d % 2 == 0:
+        d //= 2
+        exp += 1
+
+    for a in witnesses:
+        if a == n:
+            return True
+        if not _witness_test(n,d,a,exp):
+            return False
+    return True
+
 def factors(n:int) -> Set[int]:
     """Iteratively check every possible divisor to find the factors of n"""
 
