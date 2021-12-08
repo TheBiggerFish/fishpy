@@ -4,6 +4,9 @@ from fishpy.geometry import Point
 
 
 class TestPointStaticMethods(unittest.TestCase):
+    def setUp(self):
+        self.p1 = Point(1,1)
+
     def test_origin(self):
         self.assertEqual(Point.origin(1),Point(0))
         self.assertEqual(Point.origin(2),Point(0,0))
@@ -13,6 +16,11 @@ class TestPointStaticMethods(unittest.TestCase):
 
         self.assertNotEqual(Point.origin(5),Point(0,0,0,0,1))
         self.assertNotEqual(Point.origin(5),Point(0,0,0,0,0,1))
+
+    def test_random(self):
+        self.assertTrue(Point.random(lower_bound=self.p1,
+                                     upper_bound=Point(5,5)
+                                    ).in_bounds(self.p1,Point(5,5)))
 
 class TestPointDunderMethods(unittest.TestCase):
     def setUp(self):
@@ -112,10 +120,10 @@ class TestPointMethods(unittest.TestCase):
         self.p4 = Point(-3,5)
 
     def test_copy(self):
-        self.p2 = self.p1.copy()
-        self.assertEqual(self.p2,self.p1)
-        self.p2.x = 0
-        self.assertNotEqual(self.p2,self.p1)
+        test_point = self.p1.copy()
+        self.assertEqual(test_point,self.p1)
+        test_point.x = 0
+        self.assertNotEqual(test_point,self.p1)
 
     def test_manhattan_distance(self):
         self.assertEqual(self.p1.manhattan_distance(self.p2),6)
@@ -150,10 +158,6 @@ class TestPointMethods(unittest.TestCase):
         self.assertSequenceEqual(self.p3.as_tuple(),(0,2))
         self.assertSequenceEqual(self.p4.as_tuple(),(-3,5))
 
-    def test_random(self):
-        self.assertTrue(Point.random(lower_bound=self.p1,
-                                     upper_bound=Point(5,5)
-                                    ).in_bounds(self.p1,Point(5,5)))
 
 
 if __name__ == '__main__':
