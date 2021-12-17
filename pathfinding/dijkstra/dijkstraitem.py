@@ -7,8 +7,8 @@ T = TypeVar('T')
 class DijkstraItem(Generic[T]):
     """Class to be used in priority queue for Dijkstra pathfinding search"""
 
-    def __init__(self, value:T, g:int, h: int = 0):
-        self.value = value
+    def __init__(self, payload:T, g:int, h: int = 0):
+        self.payload = payload
         self.g = g
         self.h = h
 
@@ -20,10 +20,10 @@ class DijkstraItem(Generic[T]):
         return 0
 
     def __lt__(self,other:'DijkstraItem') -> bool:
-        return (self.g+self.h,self.h,self.g) < (other.g+other.h,other.h,other.g)
+        return (self.g+self.h,self.g,self.h) < (other.g+other.h,other.g,other.h)
 
     def __hash__(self) -> int:
-        return hash(self.value)
+        return hash(self.payload)
 
     def __str__(self) -> str:
-        return f'DijkstraItem: value=\'{str(self.value)}\', g={self.g}, h={self.h}'
+        return f'DijkstraItem: payload=\'{str(self.payload)}\', g={self.g}, h={self.h}'
