@@ -2,6 +2,7 @@
 
 
 from enum import Enum
+from copy import copy
 
 from ..geometry import LatticePoint
 
@@ -17,13 +18,19 @@ class Location(LatticePoint):
         self.rep = rep
 
     def copy(self) -> 'Location':
-        return Location(self.x,self.y,self.type,self.rep[:])
+        return Location(self.x,self.y,self.type,copy(self.rep))
 
     def __str__(self) -> str:
-        return self.rep
+        return str(self.rep)
+
+    def __repr__(self) -> str:
+        return f'Location(x={self.x},y={self.y},rep={self.rep},type={self.type})'
 
     def __eq__(self,other:'Location') -> None:
         return super().__eq__(other) and self.type == other.type and self.rep == other.rep
+
+    def __hash__(self) -> int:
+        return hash((self.x,self.y))
 
     def is_passible(self) -> bool:
         """Returns whether this location is passible"""
