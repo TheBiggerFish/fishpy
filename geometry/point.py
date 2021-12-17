@@ -8,7 +8,6 @@ from random import uniform
 from typing import Iterable, List, Optional, Tuple, Union
 
 
-@total_ordering
 class Point:
     """Class for storing points which lie in n-dimensional space"""
 

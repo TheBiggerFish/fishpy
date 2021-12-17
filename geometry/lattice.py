@@ -71,6 +71,9 @@ class LatticePoint(Point2D):
     def __abs__(self) -> 'LatticePoint':
         return LatticePoint(abs(self.x),abs(self.y))
 
+    def __hash__(self) -> int:
+        return hash(self.as_tuple())
+
     def lattice_midpoint(self,other:'LatticePoint') -> 'LatticePoint':
         """Returns the midpoint between two points"""
         return (self + other) // 2
