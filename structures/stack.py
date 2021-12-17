@@ -14,6 +14,9 @@ class Stack(Generic[T]):
                 'Stack.max_size (cannot be less than 0)')
         self.max_size = max_size
 
+    def __repr__(self):
+        return repr(self._stack)
+
     def empty(self) -> bool:
         """Predicate method which returns true if the stack is empty"""
         return self.size() == 0
