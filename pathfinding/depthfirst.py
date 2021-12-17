@@ -7,13 +7,15 @@ from ..structures import Stack
 T = TypeVar('T')
 
 def path(start:T,end:T,previous:Dict[T,T]):
-    path = []
+    """Iterate through a map of objects to previous object from end to start"""
+
+    path_objects = []
     cur = end
     while cur != start:
-        path.append(cur)
+        path_objects.append(cur)
         cur = previous[cur]
-    path.append(cur)
-    return list(reversed(path))
+    path_objects.append(cur)
+    return list(reversed(path_objects))
 
 def shortest_path(start:T,target:T,
                   adjacency_function: Callable[[T],List[T]],

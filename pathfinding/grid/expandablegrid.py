@@ -41,7 +41,7 @@ class ExpandableGrid(Grid):
         Add "steps" additional rows to the bottom of the grid, using "fill_char"
         as the character to fill in the rows
         """
-        
+
         if steps == 0:
             return self
 
@@ -140,7 +140,7 @@ class ExpandableGrid(Grid):
 
     def overlay(self,other:'ExpandableGrid',empty_char:str='.'):
         self_bounds,other_bounds = self.bounds,other.bounds
-        
+
         new_grid = self.copy()
         new_grid = new_grid.expand_left(max(0,self_bounds[0].x-other_bounds[0].x))
         new_grid = new_grid.expand_down(max(0,other_bounds[1].y-self_bounds[1].y))

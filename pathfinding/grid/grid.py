@@ -5,7 +5,7 @@ pathfinding which follows a lattice grid
 
 #pylint:disable=protected-access
 
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Type
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 from queue import Queue
 
 from fishpy.geometry import LatticePoint, Vector2D
@@ -106,7 +106,7 @@ class Grid:
         grid = cls.blank(max_-min_+LatticePoint(1,1),min_)
         for location in locations:
             grid[location] = location
-        return grid            
+        return grid
 
     @classmethod
     def blank(cls,bounds:LatticePoint,offset:LatticePoint=LatticePoint(0,0)):
@@ -149,6 +149,7 @@ class Grid:
 
     @property
     def bounds(self) -> Tuple[LatticePoint,LatticePoint]:
+        """This property represents the lower and upper bounds of the grid"""
         return self.offset,self.offset+self.size
 
     def copy(self):
@@ -196,7 +197,7 @@ class Grid:
             if pt in self:
                 self[pt].rep = path_char
 
-    def overlay(self,other:'Grid',empty:str='.'):
+    def overlay(self,other:'Grid',empty_char:str='.'):
         """Overlay the self grid over top of another grid"""
 
         if other.bounds[0] not in self or other.bounds[1]-LatticePoint(1,1) not in self:
@@ -207,7 +208,7 @@ class Grid:
         new = self.copy()
         for loc in other:
             loc:Location
-            if loc.rep != empty:
+            if loc.rep != empty_char:
                 new[loc] = loc
         return new
 
@@ -263,6 +264,11 @@ class Grid:
 
     def flood_fill(self,start:Location,
                    predicate_function:Callable[[Location],bool]) -> List[Location]:
+        """
+        This methods performs a flood fill from the start location, walled of
+        by predicate_function
+        """
+
         seen = set()
         q = Queue()
         q.put(start)

@@ -3,7 +3,6 @@ Provides a class implementing Dijkstra's Algorithm with support of heuristics (A
 """
 
 
-from functools import cached_property
 from queue import PriorityQueue
 from typing import Callable, Dict, Generic, List, Optional, TypeVar
 
