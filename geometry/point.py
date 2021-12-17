@@ -3,7 +3,7 @@ This module provides a class for storing points which lie in n-dimensional
 space
 """
 
-from functools import cached_property, total_ordering
+from functools import cached_property
 from random import uniform
 from typing import Iterable, List, Optional, Tuple, Union
 
