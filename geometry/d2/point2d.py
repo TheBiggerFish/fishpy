@@ -4,7 +4,7 @@ from math import ceil, floor
 from random import uniform
 from typing import Final, Tuple
 
-from .point import Point
+from ..point import Point
 from .vector2d import Vector2D
 
 

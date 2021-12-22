@@ -3,7 +3,7 @@
 from math import atan, cos, degrees, radians, sin
 from typing import Union
 
-from .point import Point
+from ..point import Point
 
 
 class Vector2D(Point):

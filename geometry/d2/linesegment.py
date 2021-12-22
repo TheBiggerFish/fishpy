@@ -4,7 +4,7 @@ from math import ceil, floor
 from typing import Optional, Set
 
 import numpy as np
-from fishpy.geometry.lattice import LatticePoint
+from .lattice import LatticePoint
 
 from .point2d import Point2D
 

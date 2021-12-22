@@ -3,7 +3,7 @@
 from typing import List, Tuple
 
 from .corner import Corner
-from .point import Point
+from ..point import Point
 
 
 class Triangle:

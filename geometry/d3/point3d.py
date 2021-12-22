@@ -1,8 +1,8 @@
 """This module provides a class for storing points which lie in 3-space"""
 
-from typing import List, Optional
+from typing import Final, List, Optional
 
-from .point import Point
+from ..point import Point
 
 
 class Point3D(Point):
@@ -16,6 +16,9 @@ class Point3D(Point):
 
     def __sub__(self,other:'Point3D') -> bool:
         return Point3D(self.x-other.x,self.y-other.y,self.z-other.z)
+
+    def copy(self) -> 'Point3D':
+        return Point3D(self.x,self.y,self.z)
 
     def get_adjacent_points(self,diagonals:bool=False,
                             lower_bound:Optional['Point3D']=None,
@@ -33,3 +36,5 @@ class Point3D(Point):
                     Point3D(-1,1,1),Point3D(-1,1,-1),Point3D(-1,-1,1),Point3D(-1,-1,-1)]
         adj = [self + p for p in adj]
         return Point.bounded_filter(adj,lower_bound,upper_bound)
+
+ORIGIN: Final[Point3D] = Point3D(0,0,0)

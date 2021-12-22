@@ -3,8 +3,7 @@
 from math import isclose
 from typing import Optional, Set
 
-from fishpy.geometry.lattice import LatticePoint
-
+from .lattice import LatticePoint
 from .linesegment import LineSegment
 from .point2d import Point2D
 

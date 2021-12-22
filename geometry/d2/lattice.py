@@ -3,7 +3,7 @@
 from random import randint
 from typing import Optional
 
-from .point import Point
+from ..point import Point
 from .point2d import Point2D
 from .vector2d import DOWN, LEFT, RIGHT, UP
 
