@@ -40,12 +40,18 @@ class Instruction:
     def __str__(self):
         return f'{self.operation.identifier} {" ".join(self.arguments)}'
 
+    def __repr__(self):
+        return f'Instruction("{self}")'
+
 class Computer:
     """Class used to execute programs"""
 
     def __init__(self, registers:RegisterDict, initial_pc:ProgramCounter=0):
         self.pc = initial_pc
         self.regs = registers
+
+    def __repr__(self) -> str:
+        return f'Computer(pc:{self.pc},registers:{self.regs})'
 
     def execute_instruction(self, instruction:Instruction) -> ProgramCounter:
         """Execute a single instruction on the computer"""
