@@ -58,7 +58,7 @@ class TestPointDunderMethods(unittest.TestCase):
     def test_lt(self):
         self.assertTrue(Point(0, 0) < self.p1)
         self.assertTrue(Point(-3, 0) < self.p3)
-        self.assertFalse(Point(-1, 1) < self.p3)
+        self.assertFalse(Point(0, 2) < self.p3)
         self.assertFalse(Point(-3, 5) < self.p4)
 
     def test_le(self):
