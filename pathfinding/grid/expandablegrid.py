@@ -155,6 +155,7 @@ class ExpandableGrid(Grid):
 
     def overlay(self, other: 'ExpandableGrid', empty_char: str = '.'):
         """Overlay one grid over top of another"""
+        # pylint: disable=E1101
 
         self_bounds, other_bounds = self.bounds, other.bounds
 
