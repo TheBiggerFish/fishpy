@@ -200,6 +200,7 @@ class Point:
         return Point(*tuple(coords))
 
     def volume(self, other: 'Point') -> float:
+        """Returns the volume of the cuboid created by self and other"""
         prod = 1
         for dim in self-other:
             prod *= dim
