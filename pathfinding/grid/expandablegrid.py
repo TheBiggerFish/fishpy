@@ -154,6 +154,8 @@ class ExpandableGrid(Grid):
         return self
 
     def overlay(self, other: 'ExpandableGrid', empty_char: str = '.'):
+        """Overlay one grid over top of another"""
+
         self_bounds, other_bounds = self.bounds, other.bounds
 
         new_grid: ExpandableGrid = self.copy()
