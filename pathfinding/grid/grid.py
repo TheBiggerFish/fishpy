@@ -5,8 +5,8 @@ pathfinding which follows a lattice grid
 
 #pylint:disable=protected-access
 
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 from queue import Queue
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 
 from fishpy.geometry import LatticePoint, Vector2D
 
@@ -57,16 +57,14 @@ class Grid:
                 return False
         return True
 
-    def char_positions(self,chars:List[str]) -> Dict[str,List[LatticePoint]]:
+    def char_positions(self,chars:Iterable[str]) -> Dict[str,List[LatticePoint]]:
         """
         Return a list of points for each character passed in the "chars" list
         which represents the list of positions in which that character can be
         found on the grid
         """
 
-        mapping:Dict[str,List[LatticePoint]] = {}
-        for char in chars:
-            mapping[char] = []
+        mapping:Dict[str,List[LatticePoint]] = {char:[] for char in chars}
         for x in range(self.offset.x,self.offset.x+self.width):
             for y in range(self.offset.y,self.offset.y+self.height):
                 pt = LatticePoint(x,y)
@@ -222,7 +220,7 @@ class Grid:
     def __str__(self) -> str:
         return self.to_string()
 
-
+    # TODO: FIX
     def subgrid(self,lower_bound:Optional[LatticePoint]=None,
                 upper_bound:Optional[LatticePoint]=None,
                 reference:bool=False):
