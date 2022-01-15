@@ -1,5 +1,6 @@
 """This module contains a collection of structural classes"""
 
+from .bound import Bounds
 from .cycle import Cycle
 from .linkedlist import LinkedList
 from .node import Node
