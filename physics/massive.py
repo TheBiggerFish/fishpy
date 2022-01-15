@@ -5,8 +5,6 @@ This module provides a class to represent moving physics objects with mass
 from ..geometry import Point2D, Vector2D
 from .movement import MovingObject
 
-G = 0.000000001
-
 
 class MassiveObject(MovingObject):
     """This class is used to represent objects with mass and movement physics"""
@@ -19,7 +17,8 @@ class MassiveObject(MovingObject):
         self.mass = mass
         super().__init__(position, velocity, acceleration, update_position_first)
 
-    def gravitational_acceleration(self, other: 'MassiveObject', G: float = 6.674*10**-11) -> Vector2D:
+    def gravitational_acceleration(self, other: 'MassiveObject',
+                                   G: float = 6.674*10**-11) -> Vector2D:
         """Calculate the acceleration due to gravity of self towards other"""
 
         dist = self.position.euclidean_distance(other.position)

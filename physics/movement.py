@@ -1,6 +1,4 @@
-"""
-This module provides a class to represent moving physics objects 
-"""
+"""This module provides a class to represent moving physics objects"""
 
 from ..geometry import Point2D, Vector2D
 

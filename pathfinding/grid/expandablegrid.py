@@ -91,6 +91,8 @@ class ExpandableGrid(Grid):
         return self
 
     def expand_all(self, steps: int, fill_char: str = '.'):
+        """Expand a number of steps in each direction"""
+
         if steps == 0:
             return self
 
@@ -154,7 +156,7 @@ class ExpandableGrid(Grid):
     def overlay(self, other: 'ExpandableGrid', empty_char: str = '.'):
         self_bounds, other_bounds = self.bounds, other.bounds
 
-        new_grid = self.copy()
+        new_grid: ExpandableGrid = self.copy()
         new_grid = new_grid.expand_left(
             max(0, self_bounds[0].x-other_bounds[0].x))
         new_grid = new_grid.expand_down(
