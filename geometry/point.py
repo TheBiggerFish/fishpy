@@ -11,24 +11,24 @@ from typing import Iterable, List, Optional, Tuple, Union
 class Point:
     """Class for storing points which lie in n-dimensional space"""
 
-    def __init__(self,*coords:int):
+    def __init__(self, *coords: int):
         self._coords = list(coords)
 
-    def __getitem__(self,key:Union[int,slice]) -> float:
-        if isinstance(key,int):
+    def __getitem__(self, key: Union[int, slice]) -> float:
+        if isinstance(key, int):
             if key < 0:
                 raise IndexError('Dimension index must be positive')
             if key >= self.dimensions:
                 return 0
             return self._coords[key]
 
-        if isinstance(key,slice):
+        if isinstance(key, slice):
             return self._coords[key]
 
         raise TypeError('Point accessor must be an integer')
 
-    def __setitem__(self,index:int,value:float) -> None:
-        if not isinstance(index,int):
+    def __setitem__(self, index: int, value: float) -> None:
+        if not isinstance(index, int):
             raise TypeError('Dimension index must be an integer')
 
         if index < 0:
@@ -39,7 +39,7 @@ class Point:
         self._coords[index] = value
 
     @staticmethod
-    def origin(dimensions:int) -> 'Point':
+    def origin(dimensions: int) -> 'Point':
         """Returns the origin of an n-dimensional space"""
         return Point(*((0,)*dimensions))
 
@@ -58,13 +58,13 @@ class Point:
         """Returns a shallow copy of self"""
         return Point(*tuple(self._coords))
 
-    def __add__(self,other:'Point') -> 'Point':
-        iterations = max(self.dimensions,other.dimensions)
+    def __add__(self, other: 'Point') -> 'Point':
+        iterations = max(self.dimensions, other.dimensions)
         t = (self[i]+other[i] for i in range(iterations))
         return Point(*t)
 
-    def __sub__(self,other:'Point') -> 'Point':
-        iterations = max(self.dimensions,other.dimensions)
+    def __sub__(self, other: 'Point') -> 'Point':
+        iterations = max(self.dimensions, other.dimensions)
         t = (self[i]-other[i] for i in range(iterations))
         return Point(*t)
 
@@ -76,80 +76,86 @@ class Point:
         for c in self._coords:
             yield c
 
-    def __eq__(self,other:'Point') -> bool:
-        iterations = max(self.dimensions,other.dimensions)
+    def __eq__(self, other: 'Point') -> bool:
+        iterations = max(self.dimensions, other.dimensions)
         for i in range(iterations):
             if self[i] != other[i]:
                 return False
         return True
 
-    def __le__(self,other:'Point') -> bool:
-        iterations = max(self.dimensions,other.dimensions)
+    def __le__(self, other: 'Point') -> bool:
+        iterations = max(self.dimensions, other.dimensions)
         for i in range(iterations):
-            if self[i] > other[i]:
-                return False
-        return True
+            if self[i] <= other[i]:
+                return True
+        return False
 
-    def __lt__(self,other:'Point') -> bool:
-        iterations = max(self.dimensions,other.dimensions)
+    def __lt__(self, other: 'Point') -> bool:
+        iterations = max(self.dimensions, other.dimensions)
         for i in range(iterations):
-            if self[i] >= other[i]:
-                return False
-        return True
+            if self[i] < other[i]:
+                return True
+        return False
+
+    def __gt__(self, other: 'Point') -> bool:
+        return not self <= other
+
+    def __ge__(self, other: 'Point') -> bool:
+        return not self < other
 
     def __hash__(self) -> int:
         return hash(tuple(self._coords))
 
-    def __mul__(self,scalar:float) -> 'Point':
+    def __mul__(self, scalar: float) -> 'Point':
         p = self.copy()
         for i in range(p.dimensions):
             p[i] *= scalar
         return p
 
-    def __truediv__(self,scalar:float) -> 'Point':
+    def __truediv__(self, scalar: float) -> 'Point':
         p = self.copy()
         for i in range(p.dimensions):
             p[i] /= scalar
         return p
 
-    def __floordiv__(self,scalar:float) -> 'Point':
+    def __floordiv__(self, scalar: float) -> 'Point':
         p = self.copy()
         for i in range(p.dimensions):
             p[i] //= scalar
         return p
 
-    def __mod__(self,divisor:'Point') -> 'Point':
+    def __mod__(self, divisor: 'Point') -> 'Point':
         p = self.copy()
         for i in range(p.dimensions):
             p[i] %= divisor
         return p
 
-    def manhattan_distance(self,other:'Point') -> float:
+    def manhattan_distance(self, other: 'Point') -> float:
         """Returns the manhattan distance between two points"""
 
         distance = 0
-        iterations = max(self.dimensions,other.dimensions)
+        iterations = max(self.dimensions, other.dimensions)
         for dimension in range(iterations):
             distance += abs(self[dimension] - other[dimension])
         return distance
 
-    def euclidean_distance(self,other:'Point') -> float:
+    def euclidean_distance(self, other: 'Point') -> float:
         """Returns the actual distance between two points"""
 
         distance = 0
-        iterations = max(self.dimensions,other.dimensions)
+        iterations = max(self.dimensions, other.dimensions)
         for dimension in range(iterations):
             distance += (self[dimension] - other[dimension])**2
         return distance**0.5
 
-    def midpoint(self,other:'Point') -> 'Point':
+    def midpoint(self, other: 'Point') -> 'Point':
         """Returns the midpoint between two points"""
         return (self + other) / 2
 
     @staticmethod
-    def bounded_filter(points:Iterable['Point'],
-                       lower_bound:Optional['Point']=None,
-                       upper_bound:Optional['Point']=None) -> List['Point']:
+    def bounded_filter(points: Iterable['Point'],
+                       lower_bound: Optional['Point'] = None,
+                       upper_bound: Optional['Point'] = None) -> List['Point']:
         """
         Takes an iterable of points, and returns the list of points which lie
         within a bound
@@ -161,30 +167,48 @@ class Point:
             points = filter(lambda x: x < upper_bound, points)
         return list(points)
 
-    def in_bounds(self,lower_bound:'Point',upper_bound:'Point') -> bool:
+    def in_bounds(self, lower_bound: 'Point', upper_bound: 'Point') -> bool:
         """
         Returns whether a point lies within the rectangle between two points
         """
         return lower_bound <= self < upper_bound
+
+    def clamp_bounds(self, lower_bound: 'Point', upper_bound: 'Point') -> 'Point':
+        """
+        Returns a point clamped within a rectangle between two points
+        """
+        rv = self.copy()
+        for dimension in range(self.dimensions):
+            if self[dimension] < lower_bound[dimension]:
+                rv[dimension] = lower_bound[dimension]
+            elif self[dimension] > upper_bound[dimension]:
+                rv[dimension] = upper_bound[dimension]
+        return rv
 
     def as_tuple(self) -> Tuple[float]:
         """Returns a tuple representing self"""
         return tuple(self._coords)
 
     @staticmethod
-    def random(lower_bound:'Point',upper_bound:'Point') -> 'Point':
+    def random(lower_bound: 'Point', upper_bound: 'Point') -> 'Point':
         """Returns a random point which lies in the rectangle between two bounds"""
 
         coords = []
-        iterations = max(lower_bound.dimensions,upper_bound.dimensions)
+        iterations = max(lower_bound.dimensions, upper_bound.dimensions)
         for i in range(iterations):
-            coords.append(uniform(lower_bound[i],upper_bound[i]))
+            coords.append(uniform(lower_bound[i], upper_bound[i]))
         return Point(*tuple(coords))
 
-    def _assert_dimension(self,dim:int,coord:str) -> None:
+    def volume(self, other: 'Point') -> float:
+        prod = 1
+        for dim in self-other:
+            prod *= dim
+        return abs(prod)
+
+    def _assert_dimension(self, dim: int, coord: str) -> None:
         if self.dimensions < dim:
-            raise IndexError(f'{self.dimensions} dimensional points do not '\
-                f'have a <{coord}> coordinate, required dim >= {dim}')
+            raise IndexError(f'{self.dimensions} dimensional points do not '
+                             f'have a <{coord}> coordinate, required dim >= {dim}')
 
     @property
     def x(self) -> float:
@@ -192,8 +216,8 @@ class Point:
         return self[0]
 
     @x.setter
-    def x(self,value:float) -> None:
-        self._assert_dimension(1,'x')
+    def x(self, value: float) -> None:
+        self._assert_dimension(1, 'x')
         self._coords[0] = value
 
     @property
@@ -202,8 +226,8 @@ class Point:
         return self[1]
 
     @y.setter
-    def y(self,value:float) -> None:
-        self._assert_dimension(2,'y')
+    def y(self, value: float) -> None:
+        self._assert_dimension(2, 'y')
         self._coords[1] = value
 
     @property
@@ -212,8 +236,8 @@ class Point:
         return self[2]
 
     @z.setter
-    def z(self,value:float) -> None:
-        self._assert_dimension(3,'z')
+    def z(self, value: float) -> None:
+        self._assert_dimension(3, 'z')
         self._coords[2] = value
 
     @property
@@ -222,6 +246,6 @@ class Point:
         return self[3]
 
     @w.setter
-    def w(self,value:float) -> None:
-        self._assert_dimension(4,'w')
+    def w(self, value: float) -> None:
+        self._assert_dimension(4, 'w')
         self._coords[3] = value

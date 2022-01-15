@@ -4,3 +4,4 @@ geometric concepts in 3 dimensions
 """
 
 from .point3d import ORIGIN, Point3D
+from .cuboid import Cuboid
