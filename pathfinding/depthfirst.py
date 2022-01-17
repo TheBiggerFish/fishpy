@@ -6,7 +6,8 @@ from ..structures import Stack
 
 T = TypeVar('T')
 
-def path(start:T,end:T,previous:Dict[T,T]):
+
+def path(start: T, end: T, previous: Dict[T, T]):
     """Iterate through a map of objects to previous object from end to start"""
 
     path_objects = []
@@ -17,14 +18,16 @@ def path(start:T,end:T,previous:Dict[T,T]):
     path_objects.append(cur)
     return list(reversed(path_objects))
 
-def shortest_path(start:T,target:T,
-                  adjacency_function: Callable[[T],List[T]],
-                  distance_function: Optional[Callable[[T,T],Union[int,float]]] = None,
-                  validation_function: Optional[Callable[[T],bool]] = None
-                 ) -> Tuple[int,List[T]]:
+
+def shortest_path(start: T, target: T,
+                  adjacency_function: Callable[[T], List[T]],
+                  distance_function: Optional[Callable[[
+                      T, T], Union[int, float]]] = None,
+                  validation_function: Optional[Callable[[T], bool]] = None
+                  ) -> Tuple[int, List[T]]:
     """Execute a depth first search and return the length of shortest path to target"""
 
-    distance = {start:0}
+    distance = {start: 0}
     prev = {}
 
     stack = Stack()
@@ -33,7 +36,7 @@ def shortest_path(start:T,target:T,
     while not stack.empty():
         cur = stack.pop()
         if cur == target:
-            return distance[target],path(start,target,prev)
+            return distance[target], path(start, target, prev)
 
         neighbors = adjacency_function(cur)
         for adj in neighbors:
@@ -41,25 +44,26 @@ def shortest_path(start:T,target:T,
                 continue
 
             if distance_function is not None:
-                d = distance_function(cur,adj)
+                d = distance_function(cur, adj)
             elif adj in prev:
                 continue
             else:
                 d = 1
 
             new_distance = distance[cur] + d
-            if (adj not in distance
-                or (new_distance < distance[adj])):
+            if (adj not in distance or (new_distance < distance[adj])):
                 distance[adj] = new_distance
                 prev[adj] = cur
                 stack.push(adj)
     return None, None
 
-def longest_path(start:T,target:T,
-                  adjacency_function: Callable[[T],List[T]],
-                  distance_function: Optional[Callable[[T,T],Union[int,float]]] = None,
-                  validation_function: Optional[Callable[[T],bool]] = None
-                ) -> Tuple[int,List[T]]:
+
+def longest_path(start: T, target: T,
+                 adjacency_function: Callable[[T], List[T]],
+                 distance_function: Optional[Callable[[
+                     T, T], Union[int, float]]] = None,
+                 validation_function: Optional[Callable[[T], bool]] = None
+                 ) -> Tuple[int, List[T]]:
     """Execute a depth first search and return the length of longest path to target"""
 
     raise NotImplementedError('Longest path has not been implemented')
