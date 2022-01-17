@@ -17,6 +17,10 @@ class MassiveObject(MovingObject):
         self.mass = mass
         super().__init__(position, velocity, acceleration, update_position_first)
 
+    def __repr__(self):
+        return (f'{self.__class__.__name__}(mass={self.mass},pos={self.position},'
+                f'vel={self.velocity},acc={self.acceleration})')
+
     def gravitational_acceleration(self, other: 'MassiveObject',
                                    G: float = 6.674*10**-11) -> Vector2D:
         """Calculate the acceleration due to gravity of self towards other"""

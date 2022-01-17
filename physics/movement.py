@@ -15,6 +15,10 @@ class MovingObject:
         self.acceleration = acceleration
         self._update_position_first = update_position_first
 
+    def __repr__(self):
+        return (f'{self.__class__.__name__}(pos={self.position},'
+                f'vel={self.velocity},acc={self.acceleration})')
+
     def step(self) -> None:
         """Step forward one unit of time, updating position and velocity"""
 
