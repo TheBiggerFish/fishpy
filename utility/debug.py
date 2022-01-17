@@ -19,7 +19,8 @@ def monitor(func):
         return return_value
     return wrapper
 
-def log(log_function:Callable[[str],None]=print):
+
+def log(log_function: Callable[[str], None] = print):
     """ Debug a method and output using log_function """
     def decorator(function):
         @functools.wraps(function)
@@ -32,23 +33,25 @@ def log(log_function:Callable[[str],None]=print):
         return wrapper
     return decorator
 
+
 def timer(func):
     """ Calculate the execution time of a method and return it back """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         start = time.time()
         result = func(*args, **kwargs)
-        duration = round(time.time() - start,6)
+        duration = round(time.time() - start, 6)
         print(f'Duration of {func.__name__} function was {duration}')
         return result
     return wrapper
+
 
 def profile(func):
     """ Profile the execution of a method """
     def wrapper(*args, **kwargs):
         prof = cProfile.Profile()
         prof.enable()
-        retval = func(*args,**kwargs)
+        retval = func(*args, **kwargs)
         prof.disable()
         stream = io.StringIO()
         stats = pstats.Stats(prof, stream=stream).sort_stats('cumtime')

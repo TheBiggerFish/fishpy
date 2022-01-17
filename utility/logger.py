@@ -14,17 +14,18 @@ class Logger(logging.Logger):
     Logs to stdout if no host provided
     """
 
-    def __init__(self, service_name:str, host:Optional[str]=None,
-                 port:str='514', level:str='INFO'):
+    def __init__(self, service_name: str, host: Optional[str] = None,
+                 port: str = '514', level: str = 'INFO'):
         super().__init__(service_name)
 
         if host is None:
             handler = logging.StreamHandler(sys.stdout)
         else:
-            handler = logging.handlers.SysLogHandler(address=(host,int(port)))
+            handler = logging.handlers.SysLogHandler(address=(host, int(port)))
 
-        formatter = logging.Formatter(fmt=f'{socket.gethostname()} '\
-            '[%(levelname)s] %(process)s {%(name)s} %(message)s')
+        formatter = logging.Formatter(fmt=f'{socket.gethostname()} '
+                                      '[%(levelname)s] %(process)s '
+                                      '{%(name)s} %(message)s')
         handler.setFormatter(formatter)
         self.addHandler(handler)
         self.setLevel(level)
