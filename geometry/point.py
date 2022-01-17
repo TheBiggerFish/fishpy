@@ -52,7 +52,7 @@ class Point:
         return str(self.as_tuple())
 
     def __repr__(self) -> str:
-        return f'Point{str(self)}'
+        return f'{self.__class__.__name__}{str(self)}'
 
     def copy(self) -> 'Point':
         """Returns a shallow copy of self"""
@@ -189,15 +189,15 @@ class Point:
         """Returns a tuple representing self"""
         return tuple(self._coords)
 
-    @staticmethod
-    def random(lower_bound: 'Point', upper_bound: 'Point') -> 'Point':
+    @classmethod
+    def random(cls, lower_bound: 'Point', upper_bound: 'Point') -> 'Point':
         """Returns a random point which lies in the rectangle between two bounds"""
 
         coords = []
         iterations = max(lower_bound.dimensions, upper_bound.dimensions)
         for i in range(iterations):
             coords.append(uniform(lower_bound[i], upper_bound[i]))
-        return Point(*tuple(coords))
+        return cls(*tuple(coords))
 
     def volume(self, other: 'Point') -> float:
         """Returns the volume of the cuboid created by self and other"""
