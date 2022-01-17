@@ -15,7 +15,7 @@ def integer_square_root(n: int, precision: int) -> List[int]:
     #  https://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Decimal_(base_10)
 
     value = []
-    pairs = _get_pairs()
+    pairs = _get_pairs(n)
 
     c, p = 0, 0
     for i in range(precision):
