@@ -82,7 +82,9 @@ MULTIPLICATION: Final[Operation] = Operation('*', lambda a, b: a*b)
 DIVISION: Final[Operation] = Operation('/', lambda a, b: a/b)
 MODULUS: Final[Operation] = Operation('%', lambda a, b: a % b)
 EXPONENTIATION: Final[Operation] = Operation('^', lambda a, b: a**b)
-PARENTHESES: Final[Operation] = GroupOperation('(', ')')
+PARENTHESES: Final[GroupOperation] = GroupOperation('(', ')')
+SQUARE_BRACKETS: Final[GroupOperation] = GroupOperation('[', ']')
+CURLY_BRACKETS: Final[GroupOperation] = GroupOperation('{', '}')
 
 
 class OrderedOperation:
@@ -98,12 +100,16 @@ class OrderedOperation:
         self.precedence = precedence
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.operation!r},precedence={self.precedence})'
+        if isinstance(self.operation, GroupOperation):
+            precedence = 'Group'
+        else:
+            precedence = self.precedence
+        return f'{self.__class__.__name__}({self.operation!r},precedence={precedence})'
 
-    def __lt__(self, other):
-        if isinstance(self, GroupOperation):
+    def __lt__(self, other: 'OrderedOperation'):
+        if isinstance(self.operation, GroupOperation):
             return False
-        if isinstance(other, GroupOperation):
+        if isinstance(other.operation, GroupOperation):
             return True
         return self.precedence < other.precedence
 
@@ -170,6 +176,7 @@ class Expression(Node):
 
     def evaluate(self) -> Union[float, int]:
         """Evaluate and return the value of the expression"""
+        self.children: List['Expression']
         if self.node_type == ExpressionNodeType.CONSTANT:
             return self.value
         if self.node_type == ExpressionNodeType.GROUP:
