@@ -5,7 +5,7 @@ from fishpy.mathematics.arithmetic import (ADDITION, CURLY_BRACKETS,
                                            PARENTHESES, PEMDAS,
                                            SQUARE_BRACKETS, SUBTRACTION,
                                            Expression, ExpressionNodeType,
-                                           Operation, OrderedOperation)
+                                           OrderedOperation)
 
 
 class TestOperation(unittest.TestCase):
