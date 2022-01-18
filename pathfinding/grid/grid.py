@@ -167,7 +167,8 @@ class Grid:
         new_grid.offset = self.offset
         return new_grid
 
-    def conditional_walls(self, predicate_function: Callable[[LatticePoint], bool], char: str) -> 'Grid':
+    def conditional_walls(self, predicate_function: Callable[[LatticePoint], bool],
+                          char: str) -> 'Grid':
         """
         This method can be used to add walls based on the results of a
         function which takes in a Point and returns a boolean for whether
