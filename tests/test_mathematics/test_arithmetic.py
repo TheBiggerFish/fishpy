@@ -1,24 +1,20 @@
 import unittest
 
-from fishpy.mathematics.arithmetic import (ADDITION, CURLY_BRACKETS, DIVISION,
-                                           EXPONENTIATION, MODULUS,
-                                           MULTIPLICATION, PARENTHESES, PEMDAS,
+from fishpy.mathematics.arithmetic import (ADDITION, CURLY_BRACKETS,
+                                           EXPONENTIATION, MULTIPLICATION,
+                                           PARENTHESES, PEMDAS,
                                            SQUARE_BRACKETS, SUBTRACTION,
-                                           EvaluationDirection, Expression,
-                                           ExpressionNodeType, GroupOperation,
+                                           Expression, ExpressionNodeType,
                                            Operation, OrderedOperation)
 
 
 class TestOperation(unittest.TestCase):
     def setUp(self):
-        def add(x, y): return x+y
-        def sub(x, y): return x-y
-        self.op1 = Operation('+', add)
-        self.op2 = Operation('-', sub)
+        pass
 
     def test_repr(self):
-        self.assertEqual(repr(self.op1), 'Operation(\'+\')')
-        self.assertEqual(repr(self.op2), 'Operation(\'-\')')
+        self.assertEqual(repr(ADDITION), 'Operation(\'+\')')
+        self.assertEqual(repr(SUBTRACTION), 'Operation(\'-\')')
 
 
 class TestGroupOperation(unittest.TestCase):
