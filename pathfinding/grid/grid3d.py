@@ -59,7 +59,10 @@ class Grid3D:
         for x in range(bounds.x):
             for y in range(bounds.y):
                 for z in range(bounds.z):
-                    is_wall = Location3D.IMPASSABLE if rows[z][y][x] == wall_char else Location3D.OPEN
+                    if rows[z][y][x] == wall_char:
+                        is_wall = Location3D.IMPASSABLE
+                    else:
+                        is_wall = Location3D.OPEN
                     loc = Location3D(x+offset.x, y+offset.y,
                                      z+offset.z, is_wall, rows[z][y][x])
                     grid[Point3D(x+offset.x, y+offset.y, z+offset.z)] = loc
