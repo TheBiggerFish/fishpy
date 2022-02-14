@@ -1,7 +1,6 @@
 """This module provides a class for storing vectors on an x-y plane"""
 
 from math import atan, cos, degrees, radians, sin
-from typing import Union
 
 from ..point import Point
 
@@ -12,24 +11,6 @@ class Vector2D(Point):
     def __init__(self, x: float, y: float):
         super().__init__(x, y)
 
-    def __add__(self, other: 'Vector2D') -> 'Vector2D':
-        return Vector2D(self.x+other.x, self.y+other.y)
-
-    def __sub__(self, other: 'Vector2D') -> 'Vector2D':
-        return Vector2D(self.x-other.x, self.y-other.y)
-
-    def __neg__(self) -> 'Vector2D':
-        return Vector2D(-self.x, -self.y)
-
-    def __mul__(self, scalar: float) -> 'Vector2D':
-        return Vector2D(self.x*scalar, self.y*scalar)
-
-    def __truediv__(self, scalar: float) -> 'Vector2D':
-        return Vector2D(self.x/scalar, self.y/scalar)
-
-    def __floordiv__(self, scalar: float) -> 'Vector2D':
-        return Vector2D(self.x//scalar, self.y//scalar)
-
     def cross(self, other: 'Vector2D') -> float:
         """Returns the cross product of self and other"""
         return (self.x*other.y) - (self.y*other.x)
@@ -37,11 +18,6 @@ class Vector2D(Point):
     def dot(self, other: 'Vector2D') -> float:
         """Returns the dot product of self and other"""
         return (self.x*other.x) + (self.y*other.y)
-
-    def magnitude(self) -> Union[int, float]:
-        """Returns the magnitude of self"""
-        val: float = (self.x**2 + self.y**2)**0.5
-        return int(val) if val.is_integer() else val
 
     def normalize(self) -> 'Vector2D':
         """Normalize self, setting self to have a magnitude of 1"""
