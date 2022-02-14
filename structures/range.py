@@ -32,6 +32,7 @@ class Range:
         return self.bound.upper - self.bound.lower + offset
 
     def step(self, current_integer: int, step_size: int = 1) -> int:
+        """Move step_size integers through the range, cycling on overflow"""
         next_int = current_integer + step_size
         if next_int not in self:
             next_int = self.bound.lower.value

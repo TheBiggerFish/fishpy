@@ -23,10 +23,12 @@ class MovingObject:
 
     @property
     def speed(self) -> float:
+        """Represents the speed of the object in units per step"""
         return self.velocity.magnitude()
 
     @property
     def direction(self) -> float:
+        """Represents the direction of the object in radians"""
         return atan2(self.velocity.y, self.velocity.x)
 
     def step(self, count: int = 1) -> None:

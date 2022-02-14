@@ -36,13 +36,9 @@ class MassiveObject(MovingObject):
     def elastic_collision(self, other: 'MassiveObject') -> Tuple[Vector2D, Vector2D]:
         """Perform physics on ball if in contact with another ball"""
 
-        m1 = self.mass
-        s1 = self.speed
-        d1 = self.direction
-
-        m2 = other.mass
-        s2 = other.speed
-        d2 = other.direction
+        m = (self.mass, other.mass)
+        s = (self.speed, other.speed)
+        d = (self.direction, other.direction)
 
         # phi represents direction from position of self to position of other
         offset = self.position - other.position
@@ -51,20 +47,20 @@ class MassiveObject(MovingObject):
         # Equations of elastic collisions in a 2-dimensional space
         # https://williamecraver.wixsite.com/elastic-equations
 
-        v1 = ((s1 * math.cos(d1 - phi) * (m1 - m2)) +
-              (2 * m2 * s2 * math.cos(d2 - phi))) / (m1 + m2)
+        v1 = ((s[0] * math.cos(d[0] - phi) * (m[0] - m[1])) +
+              (2 * m[1] * s[1] * math.cos(d[1] - phi))) / (m[0] + m[1])
         v1Fx = (v1 * math.cos(phi)) + \
-            (s1 * math.sin(d1 - phi) * math.cos(phi + (math.pi/2)))
+            (s[0] * math.sin(d[0] - phi) * math.cos(phi + (math.pi/2)))
         v1Fy = (v1 * math.sin(phi)) + \
-            (s1 * math.sin(d1 - phi) * math.sin(phi + (math.pi/2)))
+            (s[0] * math.sin(d[0] - phi) * math.sin(phi + (math.pi/2)))
         v1F = Point2D(v1Fx, v1Fy)
 
-        v2 = ((s2 * math.cos(d2 - phi) * (m2 - m1)) +
-              (2 * m1 * s1 * math.cos(d1 - phi))) / (m2 + m1)
+        v2 = ((s[1] * math.cos(d[1] - phi) * (m[1] - m[0])) +
+              (2 * m[0] * s[0] * math.cos(d[0] - phi))) / (m[1] + m[0])
         v2Fx = (v2 * math.cos(phi)) + \
-            (s2 * math.sin(d2 - phi) * math.cos(phi + (math.pi/2)))
+            (s[1] * math.sin(d[1] - phi) * math.cos(phi + (math.pi/2)))
         v2Fy = (v2 * math.sin(phi)) + \
-            (s2 * math.sin(d2 - phi) * math.sin(phi + (math.pi/2)))
+            (s[1] * math.sin(d[1] - phi) * math.sin(phi + (math.pi/2)))
         v2F = Point2D(v2Fx, v2Fy)
 
         return v1F, v2F
