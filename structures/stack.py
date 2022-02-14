@@ -14,6 +14,9 @@ class Stack(Generic[T]):
                 'Stack.max_size (cannot be less than 0)')
         self.max_size = max_size
 
+    def __iter__(self):
+        return self._stack
+
     def __repr__(self):
         return repr(self._stack)
 
