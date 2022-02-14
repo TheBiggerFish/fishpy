@@ -6,6 +6,16 @@ import socket
 import sys
 from typing import Optional
 
+NAME_TO_LEVEL = {
+    "DEBUG": logging.DEBUG,
+    "INFO": logging.INFO,
+    "WARN": logging.WARN,
+    "WARNING": logging.WARNING,
+    "ERROR": logging.ERROR,
+    "CRITICAL": logging.CRITICAL,
+    "FATAL": logging.FATAL,
+}
+
 
 class Logger(logging.Logger):
     """
@@ -20,12 +30,16 @@ class Logger(logging.Logger):
 
         if host is None:
             handler = logging.StreamHandler(sys.stdout)
+            log_format = '%(asctime)s%(msecs)03d | ' + socket.gethostname() + \
+                ' [%(levelname)s] %(process)s {%(name)s} %(message)s'
         else:
             handler = logging.handlers.SysLogHandler(address=(host, int(port)))
+            log_format = socket.gethostname() + \
+                ' [%(levelname)s] %(process)s {%(name)s} %(message)s'
 
-        formatter = logging.Formatter(fmt=f'{socket.gethostname()} '
-                                      '[%(levelname)s] %(process)s '
-                                      '{%(name)s} %(message)s')
+        dt_format = '%Y-%m-%d %H:%M:%S.'
+        formatter = logging.Formatter(fmt=log_format,
+                                      datefmt=dt_format)
         handler.setFormatter(formatter)
         self.addHandler(handler)
         self.setLevel(level)
