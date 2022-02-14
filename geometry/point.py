@@ -4,6 +4,7 @@ space
 """
 
 from functools import cached_property
+from math import ceil, floor
 from random import uniform
 from typing import Iterable, List, Optional, Tuple, Union
 
@@ -54,23 +55,23 @@ class Point:
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}{str(self)}'
 
-    def copy(self) -> 'Point':
+    def copy(self):
         """Returns a shallow copy of self"""
-        return Point(*tuple(self._coords))
+        return type(self)(*tuple(self._coords))
 
     def __add__(self, other: 'Point') -> 'Point':
         iterations = max(self.dimensions, other.dimensions)
         t = (self[i]+other[i] for i in range(iterations))
-        return Point(*t)
+        return type(self)(*t)
 
     def __sub__(self, other: 'Point') -> 'Point':
         iterations = max(self.dimensions, other.dimensions)
         t = (self[i]-other[i] for i in range(iterations))
-        return Point(*t)
+        return type(self)(*t)
 
     def __neg__(self) -> 'Point':
         t = (-self[i] for i in range(self.dimensions))
-        return Point(*t)
+        return type(self)(*t)
 
     def __iter__(self):
         for c in self._coords:
@@ -86,16 +87,16 @@ class Point:
     def __le__(self, other: 'Point') -> bool:
         iterations = max(self.dimensions, other.dimensions)
         for i in range(iterations):
-            if self[i] <= other[i]:
-                return True
-        return False
+            if self[i] > other[i]:
+                return False
+        return True
 
     def __lt__(self, other: 'Point') -> bool:
         iterations = max(self.dimensions, other.dimensions)
         for i in range(iterations):
-            if self[i] < other[i]:
-                return True
-        return False
+            if self[i] >= other[i]:
+                return False
+        return True
 
     def __gt__(self, other: 'Point') -> bool:
         return not self <= other
@@ -106,28 +107,46 @@ class Point:
     def __hash__(self) -> int:
         return hash(tuple(self._coords))
 
-    def __mul__(self, scalar: float) -> 'Point':
+    def __mul__(self, scalar: float):
         p = self.copy()
         for i in range(p.dimensions):
             p[i] *= scalar
         return p
 
-    def __truediv__(self, scalar: float) -> 'Point':
+    def __truediv__(self, scalar: float):
         p = self.copy()
         for i in range(p.dimensions):
             p[i] /= scalar
         return p
 
-    def __floordiv__(self, scalar: float) -> 'Point':
+    def __floordiv__(self, scalar: float):
         p = self.copy()
         for i in range(p.dimensions):
             p[i] //= scalar
         return p
 
-    def __mod__(self, divisor: 'Point') -> 'Point':
+    def __mod__(self, divisor: 'Point'):
         p = self.copy()
         for i in range(p.dimensions):
-            p[i] %= divisor
+            p[i] %= divisor[i]
+        return p
+
+    def __abs__(self):
+        p = self.copy()
+        for i in range(p.dimensions):
+            p[i] = abs(p[i])
+        return p
+
+    def __floor__(self):
+        p = self.copy()
+        for i in range(p.dimensions):
+            p[i] = floor(p[i])
+        return p
+
+    def __ceil__(self):
+        p = self.copy()
+        for i in range(p.dimensions):
+            p[i] = ceil(p[i])
         return p
 
     def manhattan_distance(self, other: 'Point') -> float:
@@ -197,7 +216,7 @@ class Point:
         iterations = max(lower_bound.dimensions, upper_bound.dimensions)
         for i in range(iterations):
             coords.append(uniform(lower_bound[i], upper_bound[i]))
-        return cls(*tuple(coords))
+        return cls(*coords)
 
     def volume(self, other: 'Point') -> float:
         """Returns the volume of the cuboid created by self and other"""
@@ -210,6 +229,11 @@ class Point:
         if self.dimensions < dim:
             raise IndexError(f'{self.dimensions} dimensional points do not '
                              f'have a <{coord}> coordinate, required dim >= {dim}')
+
+    def magnitude(self) -> Union[int, float]:
+        """Returns the magnitude of self"""
+        val = self.euclidean_distance(Point.origin(self.dimensions))
+        return int(val) if val.is_integer() else val
 
     @property
     def x(self) -> float:
