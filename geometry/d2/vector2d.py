@@ -24,7 +24,7 @@ class Vector2D(Point):
         return self / self.magnitude()
 
     def rotate(self, degree: float) -> 'Vector2D':
-        """Create a new vector of magnitude 1, rotated \"degree\" degrees"""
+        """Create a new vector of magnitude 1, rotated "degree" degrees"""
         return Vector2D.from_vel(self.angle()+degree, 1)
 
     def area(self) -> float:

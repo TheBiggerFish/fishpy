@@ -111,7 +111,7 @@ class Grid:
 
     @classmethod
     def blank(cls, bounds: LatticePoint, offset: LatticePoint = LatticePoint(0, 0)):
-        """Return a blank grid of the given size \"bounds\""""
+        """Return a blank grid of the given size "bounds" """
 
         grid = []
         for y in range(bounds.y):

@@ -70,7 +70,7 @@ class Grid3D:
 
     @staticmethod
     def blank(bounds: Point3D, offset: Point3D = Point3D(0, 0, 0)) -> 'Grid3D':
-        """Return a blank grid of the given size \"bounds\""""
+        """Return a blank grid of the given size "bounds" """
 
         cube = []
         for z in range(bounds.z):
