@@ -11,15 +11,6 @@ class Point3D(Point):
     def __init__(self, x: float, y: float, z: float):
         super().__init__(x, y, z)
 
-    def __add__(self, other: 'Point3D') -> bool:
-        return Point3D(self.x+other.x, self.y+other.y, self.z+other.z)
-
-    def __sub__(self, other: 'Point3D') -> bool:
-        return Point3D(self.x-other.x, self.y-other.y, self.z-other.z)
-
-    def copy(self) -> 'Point3D':
-        return Point3D(self.x, self.y, self.z)
-
     def get_adjacent_points(self, diagonals: bool = False,
                             lower_bound: Optional['Point3D'] = None,
                             upper_bound: Optional['Point3D'] = None) -> List['Point3D']:
