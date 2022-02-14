@@ -1,8 +1,6 @@
 """This module provides a class for storing points on an x-y plane"""
 
-from math import ceil, floor
-from random import uniform
-from typing import Final, Tuple
+from typing import Final
 
 from ..point import Point
 from .vector2d import Vector2D
