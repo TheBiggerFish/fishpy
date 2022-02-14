@@ -1,5 +1,7 @@
 """This module provides a class to represent moving physics objects"""
 
+from math import atan2
+
 from ..geometry import Point2D, Vector2D
 
 
@@ -19,12 +21,21 @@ class MovingObject:
         return (f'{self.__class__.__name__}(pos={self.position},'
                 f'vel={self.velocity},acc={self.acceleration})')
 
-    def step(self) -> None:
-        """Step forward one unit of time, updating position and velocity"""
+    @property
+    def speed(self) -> float:
+        return self.velocity.magnitude()
 
-        if self._update_position_first:
-            self.position += self.velocity
-            self.velocity += self.acceleration
-        else:
-            self.velocity += self.acceleration
-            self.position += self.velocity
+    @property
+    def direction(self) -> float:
+        return atan2(self.velocity.y, self.velocity.x)
+
+    def step(self, count: int = 1) -> None:
+        """Step forward 'count' units of time, updating position and velocity"""
+
+        for _ in range(count):
+            if self._update_position_first:
+                self.position += self.velocity
+                self.velocity += self.acceleration
+            else:
+                self.velocity += self.acceleration
+                self.position += self.velocity
