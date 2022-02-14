@@ -35,21 +35,21 @@ def adjacent_strings(string: str, char_set: Optional[Set[str]] = None,
 
     if char_set is None:
         char_set = LETTER_SET
-    rv = []
+    rv = set()
     if removal:
         for i in range(len(string)):
-            rv += [string[:i] + string[i+1:]]
+            rv = rv.union([string[:i] + string[i+1:]])
     if addition:
         for i in range(len(string)+1):
             for char in char_set:
-                rv += [string[:i] + char + string[i:]]
+                rv = rv.union([string[:i] + char + string[i:]])
     if substitution:
         for i in range(len(string)):
             for char in char_set:
-                rv += [string[:i] + char + string[i+1:]]
+                rv = rv.union([string[:i] + char + string[i+1:]])
     if transpositions:
         for i, _ in enumerate(string):
             for j in range(i+1, len(string)):
-                rv += [string[:i] + string[j] +
-                       string[i+1:j] + string[i] + string[j+1:]]
+                rv = rv.union([string[:i] + string[j] +
+                               string[i+1:j] + string[i] + string[j+1:]])
     return rv
