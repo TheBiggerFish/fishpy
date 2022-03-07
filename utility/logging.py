@@ -24,9 +24,13 @@ class Logger(logging.Logger):
     Logs to stdout if no host provided
     """
 
-    def __init__(self, service_name: str, host: Optional[str] = None,
-                 port: str = '514', level: str = 'INFO'):
+    def __init__(self, service_name: str, level: str = 'INFO',
+                 host: Optional[str] = None, port: str = '514'):
         super().__init__(service_name)
+
+        if not isinstance(service_name, str):
+            raise TypeError(f'Type of service_name must be {str}, received '
+                            f'{type(service_name)}')
 
         if host is None:
             handler = logging.StreamHandler(sys.stdout)
