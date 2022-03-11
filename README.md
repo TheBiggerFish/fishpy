@@ -1,3 +1,3 @@
 # FishPy
 
-This is a library of python classes and functions that I use in solving problems for ProjectEuler
+A general purpose library with common tools used throughout my projects. 
