@@ -5,14 +5,13 @@ linked lists, etc.
 
 from typing import Generic, List, Optional, TypeVar
 
-T = TypeVar('T')
 
-class Node(Generic[T]):
+class Node:
     """This class can be used for building graphs, trees, linked lists, etc."""
 
-    def __init__(self,value:T,name:str='',
-                 children:Optional[List['Node']]=None,
-                 parent:Optional['Node']=None):
+    def __init__(self, value, name: str = '',
+                 children: Optional[List['Node']] = None,
+                 parent: Optional['Node'] = None):
         if children is None:
             children = []
         self.value = value
@@ -35,7 +34,7 @@ class Node(Generic[T]):
             cur = cur.parent
         return cur
 
-    def add_child(self,child:'Node') -> None:
+    def add_child(self, child: 'Node') -> None:
         """Add a child node to the list of children"""
         self.children.append(child)
 

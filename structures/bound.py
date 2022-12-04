@@ -4,18 +4,21 @@
 class Bound:
     """Class to be used in comparing a value to a bound"""
 
-    def __init__(self,value,inclusive:bool):
+    def __init__(self, value, inclusive: bool):
         self.value = value
         self.inclusive = inclusive
+
 
 class Bounds:
     """Class to be used in comparing a value to an upper and lower bound"""
 
-    def __init__(self,lower,upper,upper_inclusive:bool=False):
-        self.lower = Bound(lower,True)
-        self.upper = Bound(upper,upper_inclusive)
+    def __init__(self, lower, upper,
+                 upper_inclusive: bool = False,
+                 lower_inclusive: bool = False):
+        self.lower = Bound(lower, lower_inclusive)
+        self.upper = Bound(upper, upper_inclusive)
 
-    def __contains__(self,value):
+    def __contains__(self, value):
         if self.upper.inclusive:
             return self.lower.value <= value <= self.upper.value
         return self.lower.value <= value < self.upper.value

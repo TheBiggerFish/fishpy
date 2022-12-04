@@ -15,7 +15,6 @@ class Range:
                  upper: Union[int, float],
                  upper_inclusive: bool = False):
         self.bound = Bounds(lower, upper, upper_inclusive)
-        self._max = upper + 1 if upper_inclusive else upper
         self._cur = lower
 
     @staticmethod
@@ -51,8 +50,20 @@ class Range:
         rchar = ']' if self.bound.upper.inclusive else ')'
         return f'[{self.bound.lower}-{self.bound.upper}{rchar}'
 
-    def __contains__(self, item) -> bool:
-        return item in self.bound
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(bound={self.bound})'
+
+    def __contains__(self, item: Union[int, float, 'Range']) -> bool:
+        if isinstance(item, (int, float)):
+            return item in self.bound
+        elif isinstance(item, Range):
+            return item.bound.lower.value in self and item.bound.upper.value in self
+        else:
+            raise TypeError(f'Type {type(item)} not supported by Range')
+
+    def overlap(self, other: 'Range'):
+        return (other.bound.lower.value in self or other.bound.upper.value in self or
+                self.bound.lower.value in other or self.bound.upper.value in other)
 
     def division(self, parts: int, which: int) -> 'Range':
         """

@@ -4,21 +4,20 @@ This module provides a class to be used in reversing the sorting direction of th
 
 from typing import Generic, TypeVar
 
-T = TypeVar('T')
 
-class Reverse(Generic[T]):
+class Reverse:
     """This class reverses the sorting direction of the payload object"""
 
-    def __init__(self,payload:T):
+    def __init__(self, payload):
         self.payload = payload
 
-    def __lt__(self,other:'Reverse') -> bool:
+    def __lt__(self, other: 'Reverse') -> bool:
         return self.payload > other.payload
 
-    def __gt__(self,other:'Reverse') -> bool:
+    def __gt__(self, other: 'Reverse') -> bool:
         return self.payload < other.payload
 
-    def __eq__(self,other:'Reverse') -> bool:
+    def __eq__(self, other: 'Reverse') -> bool:
         return self.payload == other.payload
 
     def __str__(self) -> str:
