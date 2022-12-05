@@ -15,11 +15,20 @@ class Stack(Generic[T]):
                              'Stack.max_size (cannot be less than 0)')
         self.max_size = max_size
 
+    @staticmethod
+    def from_list(initial: list, max_size: Optional[int] = None):
+        if max_size is not None and len(initial) > max_size:
+            raise ValueError('Initial list size greater than maximum size of'
+                             'stack')
+        s = Stack(max_size)
+        s._stack = initial
+        return s
+
     def __iter__(self):
         return iter(self._stack)
 
     def __repr__(self):
-        return repr(self._stack)
+        return f'{self.__class__.__name__}({self._stack!r})'
 
     def empty(self) -> bool:
         """Predicate method which returns true if the stack is empty"""
@@ -50,8 +59,8 @@ class Stack(Generic[T]):
     def push(self, item: T) -> None:
         """Push an additional item onto the stack"""
         if self.full():
-            raise Exception(
-                f'Cannot push to a filled Stack (stack max_size={self.max_size}')
+            raise Exception('Cannot push to a filled Stack'
+                            f'(max_size={self.max_size}')
         self._stack.append(item)
 
     def pop(self) -> T:
