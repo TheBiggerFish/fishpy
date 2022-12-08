@@ -56,7 +56,8 @@ class Vector2D(Point):
         return degrees(atan(self.y/self.x)) + (180 if self.x < 0 else 360 if self.y < 0 else 0)
 
 
-UP = Vector2D(0, 1)
-DOWN = Vector2D(0, -1)
-LEFT = Vector2D(-1, 0)
-RIGHT = Vector2D(1, 0)
+class Direction:
+    UP = Vector2D(0, 1)
+    DOWN = Vector2D(0, -1)
+    LEFT = Vector2D(-1, 0)
+    RIGHT = Vector2D(1, 0)

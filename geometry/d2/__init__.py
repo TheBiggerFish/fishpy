@@ -11,4 +11,4 @@ from .line import Line
 from .linesegment import LineSegment
 from .point2d import ORIGIN, Point2D
 from .triangle import Triangle
-from .vector2d import Vector2D
+from .vector2d import Direction, Vector2D

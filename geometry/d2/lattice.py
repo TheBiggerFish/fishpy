@@ -1,11 +1,11 @@
 """This module provides a class for storing points on an x-y lattice plane"""
 
 from random import randint
-from typing import Optional
+from typing import Optional, Union
 
 from ..point import Point
 from .point2d import Point2D
-from .vector2d import DOWN, LEFT, RIGHT, UP
+from .vector2d import Direction
 
 
 class LatticePoint(Point2D):
@@ -17,6 +17,12 @@ class LatticePoint(Point2D):
         if not isinstance(y, int):
             raise TypeError('y property of LatticePoint must be of type int')
         super().__init__(x, y)
+
+    def __setitem__(self, index: int, value: int) -> None:
+        if not isinstance(value, int):
+            raise TypeError(
+                f'Values of {self.__class__.__name__} must be of type int')
+        return super().__setitem__(index, value)
 
     @property
     def x(self) -> int:
@@ -54,10 +60,17 @@ class LatticePoint(Point2D):
             raise TypeError('scalar must be of type int')
         return LatticePoint(self.x*scalar, self.y*scalar)
 
-    def __truediv__(self, scalar: int) -> 'LatticePoint':
-        if self.x % scalar != 0 or self.y % scalar != 0:
-            raise ValueError('Division scalar creates point not on lattice')
-        return self // scalar
+    def __truediv__(self, scalar: int) -> 'Point2D':
+        return Point2D(self.x, self.y) / scalar
+
+    def __floordiv__(self, divisor: Union['LatticePoint', int]) -> 'LatticePoint':
+        if isinstance(divisor, int):
+            return super().__floordiv__(divisor)
+        elif isinstance(divisor, LatticePoint):
+            return LatticePoint(self.x // divisor.x, self.y // divisor.y)
+        else:
+            raise TypeError(f'{self.__class__.__name__} division with '
+                            f'{divisor.__class__.__name__} not supported')
 
     def __mod__(self, divisor: 'LatticePoint') -> 'LatticePoint':
         return LatticePoint(self.x % divisor.x, self.y % divisor.y)
@@ -92,19 +105,19 @@ class LatticePoint(Point2D):
 
     def up(self) -> 'LatticePoint':
         """Returns the point one above self"""
-        return self + UP
+        return self + Direction.UP
 
     def down(self) -> 'LatticePoint':
         """Returns the point one below self"""
-        return self + DOWN
+        return self + Direction.DOWN
 
     def left(self) -> 'LatticePoint':
         """Returns the point one left of self"""
-        return self + LEFT
+        return self + Direction.LEFT
 
     def right(self) -> 'LatticePoint':
         """Returns the point one right of self"""
-        return self + RIGHT
+        return self + Direction.RIGHT
 
     @staticmethod
     def random(lower_bound: 'LatticePoint', upper_bound: 'LatticePoint') -> 'LatticePoint':
@@ -116,3 +129,11 @@ class LatticePoint(Point2D):
         """
         return LatticePoint(randint(lower_bound.x, upper_bound.x),
                             randint(lower_bound.y, upper_bound.y))
+
+    @staticmethod
+    def round(point: Point2D) -> 'LatticePoint':
+        return LatticePoint(round(point.x), round(point.y))
+
+    @staticmethod
+    def floor(point: Point2D) -> 'LatticePoint':
+        return LatticePoint(int(point.x), int(point.y))
