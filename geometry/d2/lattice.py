@@ -85,6 +85,17 @@ class LatticePoint(Point2D):
         """Returns the midpoint between two points"""
         return (self + other) // 2
 
+    def is_adjacent(self, other: 'LatticePoint', diagonals: bool = False) -> bool:
+        """Predicate function which returns whether two points are adjacent"""
+        relative = other - self
+        if diagonals:
+            return -1 <= relative.x <= 1 and -1 <= relative.y <= 1
+        elif relative.x == 0:
+            return -1 <= relative.y <= 1
+        elif relative.y == 0:
+            return -1 <= relative.x <= 1
+        return False
+
     def get_adjacent_points(self, diagonals: bool = False,
                             lower_bound: Optional['LatticePoint'] = None,
                             upper_bound: Optional['LatticePoint'] = None
