@@ -56,12 +56,12 @@ class Range:
     def __contains__(self, item: Union[int, float, 'Range']) -> bool:
         if isinstance(item, (int, float)):
             return item in self.bound
-        elif isinstance(item, Range):
+        if isinstance(item, Range):
             return item.bound.lower.value in self and item.bound.upper.value in self
-        else:
-            raise TypeError(f'Type {type(item)} not supported by Range')
+        raise TypeError(f'Type {type(item)} not supported by Range')
 
-    def overlap(self, other: 'Range'):
+    def overlap(self, other: 'Range') -> bool:
+        """Predicate function to return whether two ranges overlap"""
         return (other.bound.lower.value in self or other.bound.upper.value in self or
                 self.bound.lower.value in other or self.bound.upper.value in other)
 

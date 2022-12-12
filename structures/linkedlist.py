@@ -1,6 +1,6 @@
 """This module provides an implementation of a linked list"""
 
-from typing import Generic, Optional, TypeVar
+from typing import Optional
 
 from .node import Node
 

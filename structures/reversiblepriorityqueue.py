@@ -5,7 +5,6 @@ min or max. The sorting direction cannot be changed after creation.
 
 import heapq
 from queue import PriorityQueue
-from typing import Generic, TypeVar
 
 from .reverse import Reverse
 

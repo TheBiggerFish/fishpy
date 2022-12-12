@@ -66,11 +66,10 @@ class LatticePoint(Point2D):
     def __floordiv__(self, divisor: Union['LatticePoint', int]) -> 'LatticePoint':
         if isinstance(divisor, int):
             return super().__floordiv__(divisor)
-        elif isinstance(divisor, LatticePoint):
+        if isinstance(divisor, LatticePoint):
             return LatticePoint(self.x // divisor.x, self.y // divisor.y)
-        else:
-            raise TypeError(f'{self.__class__.__name__} division with '
-                            f'{divisor.__class__.__name__} not supported')
+        raise TypeError(f'{self.__class__.__name__} division with '
+                        f'{divisor.__class__.__name__} not supported')
 
     def __mod__(self, divisor: 'LatticePoint') -> 'LatticePoint':
         return LatticePoint(self.x % divisor.x, self.y % divisor.y)
@@ -90,9 +89,9 @@ class LatticePoint(Point2D):
         relative = other - self
         if diagonals:
             return -1 <= relative.x <= 1 and -1 <= relative.y <= 1
-        elif relative.x == 0:
+        if relative.x == 0:
             return -1 <= relative.y <= 1
-        elif relative.y == 0:
+        if relative.y == 0:
             return -1 <= relative.x <= 1
         return False
 
@@ -143,8 +142,10 @@ class LatticePoint(Point2D):
 
     @staticmethod
     def round(point: Point2D) -> 'LatticePoint':
+        """Returns the point rounded to the nearest integer value"""
         return LatticePoint(round(point.x), round(point.y))
 
     @staticmethod
     def floor(point: Point2D) -> 'LatticePoint':
+        """Returns the point floored to the next lowest integer value"""
         return LatticePoint(int(point.x), int(point.y))

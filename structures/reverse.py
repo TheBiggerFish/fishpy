@@ -2,8 +2,6 @@
 This module provides a class to be used in reversing the sorting direction of the payload object
 """
 
-from typing import Generic, TypeVar
-
 
 class Reverse:
     """This class reverses the sorting direction of the payload object"""

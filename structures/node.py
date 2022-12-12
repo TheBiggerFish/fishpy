@@ -3,7 +3,7 @@ This module provides a node class which can be used in building graphs, trees,
 linked lists, etc.
 """
 
-from typing import Generic, List, Optional, TypeVar
+from typing import List, Optional
 
 
 class Node:

@@ -57,6 +57,7 @@ class Vector2D(Point):
 
 
 class Direction:
+    """Enumeration used to represent cardinal directions"""
     UP = Vector2D(0, 1)
     DOWN = Vector2D(0, -1)
     LEFT = Vector2D(-1, 0)
