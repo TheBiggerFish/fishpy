@@ -48,8 +48,8 @@ def adjacent_strings(string: str, char_set: Optional[Set[str]] = None,
             for char in char_set:
                 rv = rv.union([string[:i] + char + string[i+1:]])
     if transpositions:
-        for i, _ in enumerate(string):
+        for i, string_i in enumerate(string):
             for j in range(i+1, len(string)):
                 rv = rv.union([string[:i] + string[j] +
-                               string[i+1:j] + string[i] + string[j+1:]])
+                               string[i+1:j] + string_i + string[j+1:]])
     return rv

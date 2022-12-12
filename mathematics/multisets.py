@@ -7,7 +7,7 @@ from multiset import Multiset
 from .primes import is_prime
 
 
-def multiset_prime_factors(n,primes=None):
+def multiset_prime_factors(n, primes=None):
     """Find the smallest subset of prime factors using multisets"""
 
     # If n is prime, return a multiset containing only n
@@ -15,7 +15,7 @@ def multiset_prime_factors(n,primes=None):
         return Multiset([n])
 
     # Find the first divisor of n, add the prime multisets containing factors of the divisors
-    for i in range(2,int(n**0.5)+1):
+    for i in range(2, int(n**0.5)+1):
         if n % i == 0:
             return multiset_prime_factors(i) + multiset_prime_factors(n//i)
     return Multiset([])
