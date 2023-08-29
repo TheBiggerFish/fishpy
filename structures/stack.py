@@ -48,7 +48,7 @@ class Stack:
     def push(self, item) -> None:
         """Push an additional item onto the stack"""
         if self.full():
-            raise Exception('Cannot push to a filled Stack'
+            raise IndexError('Cannot push to a filled Stack'
                             f'(max_size={self.max_size}')
         self._stack.append(item)
 
