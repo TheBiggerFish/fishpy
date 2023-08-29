@@ -5,7 +5,8 @@ pathfinding which follows a lattice grid
 
 
 from queue import Queue
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
+from typing import (Any, Callable, Dict, Iterable, List, Optional, Set, Tuple,
+                    Union)
 
 from fishpy.geometry import LatticePoint, Vector2D
 
@@ -24,13 +25,20 @@ class Grid:
         self.offset = offset
         self._iter = LatticePoint(0, 0)
 
-    def __getitem__(self, pt: LatticePoint) -> Location:
-        if not isinstance(pt, LatticePoint):
-            raise TypeError(
-                f'Grid accessor must be of type Point, type {type(pt)} provided')
-        if pt not in self:
-            raise KeyError('Point not located on the grid')
-        return self.grid[pt.y-self.offset.y][pt.x-self.offset.x]
+    def __getitem__(self, key: Union[LatticePoint, slice]
+                    ) -> Union[Location, 'Grid']:
+        if isinstance(key, LatticePoint):
+            if key not in self:
+                raise KeyError('Point not located on the grid')
+            return self.grid[key.y-self.offset.y][key.x-self.offset.x]
+        if isinstance(key, slice):
+            if key.step is not None:
+                raise NotImplementedError(f'{self.__class__.__name__}.__getitem__ '
+                                          'cannot accept slices with a step value')
+            start, stop = key.start, key.stop
+            return self.subgrid(start, stop)
+        raise TypeError(f'{self.__class__.__name__}.__getitem__ cannot '
+                        f'accept accessors of type {type(key)}')
 
     def __setitem__(self, pt: LatticePoint, value: Any) -> None:
         if not isinstance(pt, LatticePoint):
@@ -118,7 +126,7 @@ class Grid:
             row = []
             for x in range(bounds.x):
                 row += [Location(x+offset.x, y+offset.y, Location.OPEN, '.')]
-            grid = [row] + grid
+            grid += [row]
         return cls(grid, offset=offset)
 
     @property
@@ -225,7 +233,6 @@ class Grid:
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(offset={self.offset},size={self.size})'
 
-    # TODO: FIX
     def subgrid(self, lower_bound: Optional[LatticePoint] = None,
                 upper_bound: Optional[LatticePoint] = None,
                 reference: bool = False):
@@ -234,18 +241,33 @@ class Grid:
         "upper_bound"
         """
 
-        if not lower_bound:
+        if lower_bound is None:
             lower_bound = self.offset
-        if not upper_bound:
-            upper_bound = self.bounds
+        if upper_bound is None:
+            upper_bound = self.bounds[1]
+
+        if not isinstance(lower_bound, LatticePoint):
+            raise TypeError(f'{self.__class__.__name__}.subgrid lower_bound '
+                            f'should be of type LatticePoint, '
+                            f'{type(lower_bound)=} provided')
+
+        if not isinstance(upper_bound, LatticePoint):
+            raise TypeError(f'{self.__class__.__name__}.subgrid upper_bound '
+                            f'should be of type LatticePoint, '
+                            f'{type(upper_bound)=} provided')
+
+        if lower_bound.is_above(upper_bound) or lower_bound.is_right_of(upper_bound):
+            raise ValueError('Lower bound should be less than or equal to'
+                             'upper bound')
 
         grid = []
-        for row in range(lower_bound.y, upper_bound.y):
+        for row in self.grid[lower_bound.y:upper_bound.y]:
+            row: list[Location]
             if reference:
-                grid.append(self.grid[row][lower_bound.x:upper_bound.x])
+                grid.append(row[lower_bound.x:upper_bound.x])
             else:
-                grid.append([col.copy() for col in self.grid[row]
-                            [lower_bound.x:upper_bound.x]])
+                grid.append([col.copy()
+                            for col in row[lower_bound.x:upper_bound.x]])
 
         g = type(self)(grid)
         g.offset = lower_bound
@@ -268,7 +290,7 @@ class Grid:
     def flood_fill(self, start: Location,
                    predicate_function: Callable[[Location], bool]) -> List[Location]:
         """
-        This methods performs a flood fill from the start location, walled of
+        This methods performs a flood fill from the start location, walled off
         by predicate_function
         """
 
@@ -288,3 +310,10 @@ class Grid:
                                                upper_bound=self.offset+self.size):
                 q.put(self[adj])
         return seen
+
+    def draw(self, character: str, start: LatticePoint, step: Vector2D, count: int):
+        """Write a number of characters to a grid in a single line"""
+        for i in range(count+1):
+            pos = start + step*i
+            if pos in self:
+                self[pos].rep = character
