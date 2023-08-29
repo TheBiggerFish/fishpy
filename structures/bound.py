@@ -8,6 +8,12 @@ class Bound:
         self.value = value
         self.inclusive = inclusive
 
+    def __hash__(self) -> int:
+        return hash((self.value, self.inclusive))
+
+    def __eq__(self, other: 'Bound') -> bool:
+        return self.value == other.value and self.inclusive == other.inclusive
+
 
 class Bounds:
     """Class to be used in comparing a value to an upper and lower bound"""
@@ -27,5 +33,11 @@ class Bounds:
         rchar = ']' if self.upper.inclusive else ')'
         return f'[{self.lower.value}-{self.upper.value}{rchar}'
 
+    def __eq__(self, other: 'Bounds') -> bool:
+        return self.lower == other.lower and self.upper == other.upper
+
     def __repr__(self) -> str:
         return f'Bounds({repr(self.lower.value),repr(self.upper.value),self.upper.inclusive})'
+
+    def __hash__(self) -> int:
+        return hash((self.lower, self.upper))

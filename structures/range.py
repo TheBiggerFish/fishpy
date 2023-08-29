@@ -28,7 +28,7 @@ class Range:
     def size(self) -> Union[int, float]:
         """Return the size of the range"""
         offset = (1 if self.bound.upper.inclusive else 0) - 1
-        return self.bound.upper - self.bound.lower + offset
+        return self.bound.upper.value - self.bound.lower.value + offset
 
     def step(self, current_integer: int, step_size: int = 1) -> int:
         """Move step_size integers through the range, cycling on overflow"""
@@ -46,12 +46,18 @@ class Range:
     def __gt__(self, other: 'Range') -> bool:
         return self.bound.lower > other.bound.lower
 
+    def __eq__(self, other: 'Range') -> bool:
+        return self.bound == other.bound
+
     def __str__(self) -> str:
         rchar = ']' if self.bound.upper.inclusive else ')'
-        return f'[{self.bound.lower}-{self.bound.upper}{rchar}'
+        return f'[{self.bound.lower.value}-{self.bound.upper.value}{rchar}'
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(bound={self.bound})'
+
+    def __hash__(self) -> int:
+        return hash(self.bound)
 
     def __contains__(self, item: Union[int, float, 'Range']) -> bool:
         if isinstance(item, (int, float)):
@@ -79,6 +85,12 @@ class Range:
         lower = self.bound.lower + (step * which)
         upper = lower + step
         return Range(lower, upper)
+
+    def combine(self, other: 'Range') -> 'Range':
+        """Combine two overlapping ranges into one"""
+        start = min(self.bound.lower.value, other.bound.lower.value)
+        end = max(self.bound.upper.value, other.bound.upper.value)
+        return Range(start, end, self.bound.upper.inclusive)
 
     def __iter__(self):
         if not isinstance(self.bound.lower, int):
