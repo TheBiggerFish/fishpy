@@ -1,6 +1,5 @@
 """Structures to be used in evaluating fractions and continued fractions"""
 
-#pylint: disable=invalid-name
 
 from math import gcd
 from typing import Optional, Sequence
@@ -33,6 +32,10 @@ class Fraction:
         """Reduce the fraction to the lowest equivalent value"""
         div = gcd(self.n, self.d)
         return Fraction(self.n//div, self.d//div)
+
+    def strict_equal(self, other: 'Fraction') -> bool:
+        """Check equality without reducing fraction"""
+        return self.n == other.n and self.d == other.d
 
     @staticmethod
     def _lcd(f1: 'Fraction', f2: 'Fraction'):
