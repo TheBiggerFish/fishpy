@@ -4,8 +4,7 @@ Supports arbitrary orders of operations
 """
 
 from enum import Enum
-from typing import (Any, Callable, Dict, Final, List, Optional, Set, Tuple,
-                    Union)
+from typing import Any, Callable, Dict, Final, List, Optional, Set, Union
 
 from ..structures import Node
 
@@ -224,23 +223,22 @@ class Expression(Node):
                                     precedences: Dict[int, Set[str]],
                                     eval_dir: EvaluationDirection):
         # Constant Type
-        if (num := Expression._str_is_float_or_int(exp))[0]:
-            return Expression(num[1], ExpressionNodeType.CONSTANT, [])
+        if (num := Expression._str_is_float_or_int(exp)) is not None:
+            return Expression(num, ExpressionNodeType.CONSTANT, [])
 
         if len(exp) < 3:
-            raise ValueError(f'Expression string not traversible {exp}')
+            raise ValueError(f'Expression string not traversible: "{exp}"')
 
         # Group Type
-        if exp[0] in group_chars:
-            if group_chars[exp[0]].is_around_string(exp):
-                char = exp[0]
-                child: Expression = Expression._build_from_string_traverse(
-                    exp[1:-1], op_chars, group_chars, precedences, eval_dir
-                )
-                parent = Expression(group_chars[char],
-                                    ExpressionNodeType.GROUP, [child])
-                child.parent = parent
-                return parent
+        if exp[0] in group_chars and group_chars[exp[0]].is_around_string(exp):
+            char = exp[0]
+            child: Expression = Expression._build_from_string_traverse(
+                exp[1:-1], op_chars, group_chars, precedences, eval_dir
+            )
+            parent = Expression(group_chars[char],
+                                ExpressionNodeType.GROUP, [child])
+            child.parent = parent
+            return parent
 
         if eval_dir == EvaluationDirection.RIGHT_TO_LEFT:
             eval_slice = slice(0, len(exp)-1, 1)
@@ -274,10 +272,10 @@ class Expression(Node):
         raise ValueError(f'Expression string not traversible {exp}')
 
     @staticmethod
-    def _str_is_float_or_int(exp: str) -> Tuple[bool, Union[int, float, None]]:
+    def _str_is_float_or_int(exp: str) -> Union[int, float, None]:
         if exp.isnumeric():
-            return True, int(exp)
+            return int(exp)
         try:
-            return True, float(exp)
+            return float(exp)
         except ValueError:
-            return False, None
+            return None
