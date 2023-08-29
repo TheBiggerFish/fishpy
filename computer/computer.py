@@ -13,6 +13,7 @@ StateCondition = Callable[[ProgramCounter, RegisterDict], bool]
 class Operand(IntFlag):
     """Enumeration of operands to be used in operations"""
 
+    #pylint: disable=implicit-flag-alias
     REGISTER = 1
     CONSTANT = 2
     ADDRESS = 4
