@@ -52,5 +52,12 @@ class Point2D(Point):
         """Predicate function which returns whether self is right of other"""
         return self.x > other.x
 
+    def is_lattice(self) -> bool:
+        """
+        Predicate function which returns whether self is a point on the
+        integer lattice
+        """
+        return float(self.x).is_integer() and float(self.y).is_integer()
+
 
 ORIGIN: Final[Point2D] = Point2D(0, 0)

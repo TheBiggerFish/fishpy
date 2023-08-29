@@ -106,6 +106,17 @@ class Line:
              p.x + 2*self.y_int)/((self.slope**2) + 1)
         return Point2D(u, v)
 
+    def intersection(self, other: 'Line') -> Point2D:
+        """Returns the intersection point of 2 lines"""
+        a1, b1, c1 = self.slope, -1, -self.y_int
+        a2, b2, c2 = other.slope, -1, -other.y_int
+        det = a1*b2 - a2*b1
+        if det == 0:
+            raise ValueError('Cannot find intersection of parallel lines')
+        x = (c1*b2 - c2*b1)/det
+        y = (a1*c2 - a2*c1)/det
+        return Point2D(x, y)
+
     @property
     def y_int(self) -> float:
         """Property representing the y-intercept of self"""

@@ -5,7 +5,7 @@ geometric concepts
 
 from .d2 import ORIGIN as ORIGIN_2D
 from .d2 import (Circle, Corner, Direction, Ellipse, LatticePoint, Line,
-                 LineSegment, Point2D, Vector2D, triangle)
+                 LineSegment, Point2D, Rectangle, Square, Vector2D, triangle)
 from .d3 import ORIGIN as ORIGIN_3D
 from .d3 import Cuboid, Point3D
 from .point import Point

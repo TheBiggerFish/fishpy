@@ -61,7 +61,7 @@ class LatticePoint(Point2D):
         return LatticePoint(self.x*scalar, self.y*scalar)
 
     def __truediv__(self, scalar: int) -> 'Point2D':
-        return Point2D(self.x, self.y) / scalar
+        return self.liberate() / scalar
 
     def __floordiv__(self, divisor: Union['LatticePoint', int]) -> 'LatticePoint':
         if isinstance(divisor, int):
@@ -149,3 +149,10 @@ class LatticePoint(Point2D):
     def floor(point: Point2D) -> 'LatticePoint':
         """Returns the point floored to the next lowest integer value"""
         return LatticePoint(int(point.x), int(point.y))
+
+    def liberate(self) -> Point2D:
+        """
+        Returns a Point2D with the same values as self, liberated from the
+        confines of the lattice
+        """
+        return Point2D(self.x, self.y)
