@@ -5,6 +5,7 @@ This module provides a class for a Graph with path related methods
 from typing import Callable, Dict, List, Optional, Tuple
 
 from networkx import Graph
+from networkx.algorithms.shortest_paths import shortest_path_length
 
 
 class PathGraph(Graph):
@@ -85,3 +86,22 @@ class PathGraph(Graph):
         else:
             rv = min(self.complete_hamiltonian_paths(start, end))
         return rv[1]
+
+
+class CompleteGraph(Graph):
+    """
+    Subclass of networkx.Graph providing additional features to create
+    complete graphs
+    """
+
+    def fill_missing_edges(self):
+        """
+        Fill in any missing edges between nodes with the shortest path length
+        to create a complete graph
+        """
+        for node_1 in self.nodes:
+            shortest = shortest_path_length(self, source=node_1)
+            for node_2 in self.nodes:
+                if node_1 == node_2 or node_1 in self[node_2]:
+                    continue
+                self.add_edge(node_1, node_2, weight=shortest[node_2])
