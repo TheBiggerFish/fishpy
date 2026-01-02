@@ -5,7 +5,7 @@ pathfinding which follows a lattice grid
 
 from typing import Any, Dict, Iterable, List
 
-from ...geometry import Point3D
+from ...geometry import LatticePoint, Point3D
 from ..location3d import Location3D
 from .grid import Grid
 
@@ -26,14 +26,14 @@ class Grid3D:
             raise TypeError('Grid accessor must be of type Point3D')
         if pt not in self:
             raise KeyError('Point not located on the grid')
-        return self.grid[pt.z-self.offset.z][pt]
+        return self.grid[pt.z-self.offset.z][LatticePoint(pt.x, pt.y)]
 
     def __setitem__(self, pt: Point3D, value: Any) -> None:
         if not isinstance(pt, Point3D):
             raise TypeError('Grid accessor must be of type Point3D')
         if pt not in self:
             raise KeyError('Point not located on the grid')
-        self.grid[pt.z-self.offset.z][pt] = value
+        self.grid[pt.z-self.offset.z][LatticePoint(pt.x, pt.y)] = value
 
     def __contains__(self, pt: Point3D) -> bool:
         if not isinstance(pt, Point3D):

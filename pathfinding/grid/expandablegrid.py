@@ -2,7 +2,7 @@
 This module provides an extension of Grid which can be expanded in every direction
 """
 
-from typing import Optional
+from typing import Optional, Any
 
 from ...geometry import LatticePoint
 from ..location import Location
@@ -11,6 +11,23 @@ from .grid import Grid
 
 class ExpandableGrid(Grid):
     """An extension of Grid which can be expanded in every direction"""
+
+    def __init__(self,
+                 grid: list[list[Location]],
+                 offset: LatticePoint = LatticePoint(0, 0),
+                 grow_value: Any = None):
+        super().__init__(grid, offset)
+        self.grow_value = grow_value
+
+    def __setitem__(self, pt: LatticePoint, value: Any) -> None:
+        if not isinstance(pt, LatticePoint):
+            raise TypeError(
+                f'Grid accessor must be of type LatticePoint, type {type(pt)} provided')
+        if pt not in self:
+            if self.grow_value is None:
+                raise KeyError('Point not located on the grid')
+            self.expand_to_include(pt)
+        self.grid[pt.y-self.offset.y][pt.x-self.offset.x] = value
 
     @staticmethod
     def _assert_positive_integer(n: int) -> bool:
@@ -97,8 +114,22 @@ class ExpandableGrid(Grid):
             return self
 
         grid = self.expand_up(steps, fill_char).expand_down(steps, fill_char)
-        grid = grid.expand_left(
-            steps, fill_char).expand_right(steps, fill_char)
+        grid = grid.expand_left(steps, fill_char).expand_right(steps, fill_char)
+        return grid
+
+    def expand_to_include(self, point: LatticePoint, fill_char: str = '.'):
+        """Expand the grid to include the provided point"""
+
+        low_bound, high_bound = self.bounds
+        expand_up = max(0, low_bound.y - point.y)
+        expand_down = max(0, point.y - (high_bound.y - 1))
+        expand_left = max(0, low_bound.x - point.x)
+        expand_right = max(0, point.x - (high_bound.x - 1))
+
+        grid = self.expand_up(expand_up, fill_char).expand_down(
+            expand_down, fill_char)
+        grid = grid.expand_left(expand_left, fill_char).expand_right(
+            expand_right, fill_char)
         return grid
 
     def mirror_x(self, x_value: Optional[int] = None):
@@ -147,6 +178,66 @@ class ExpandableGrid(Grid):
                     new_pos = LatticePoint(x, low_bound.y+high_bound.y-1-y)
                 else:
                     new_pos = LatticePoint(x, 2*y_value-y)
+                loc.x, loc.y = new_pos.x, new_pos.y
+                new_grid[new_pos] = loc
+        self.offset = newoffset
+        self.grid = new_grid.grid
+        return self
+
+    def rotate_cw(self):
+        """Rotate the grid 90 degrees clockwise"""
+
+        low_bound, high_bound = self.bounds
+        newoffset = LatticePoint(
+            low_bound.y * -1, high_bound.x - 1)
+        new_grid: ExpandableGrid = ExpandableGrid.blank(
+            (self.height, self.width), newoffset)
+
+        for y in range(low_bound.y, high_bound.y):
+            for x in range(low_bound.x, high_bound.x):
+                loc = self[LatticePoint(x, y)].copy()
+                new_pos = LatticePoint(
+                    high_bound.y - 1 - y, x)
+                loc.x, loc.y = new_pos.x, new_pos.y
+                new_grid[new_pos] = loc
+        self.offset = newoffset
+        self.grid = new_grid.grid
+        return self
+
+    def rotate_ccw(self):
+        """Rotate the grid 90 degrees counter-clockwise"""
+
+        low_bound, high_bound = self.bounds
+        newoffset = LatticePoint(
+            high_bound.y - 1, low_bound.x * -1)
+        new_grid: ExpandableGrid = ExpandableGrid.blank(
+            (self.height, self.width), newoffset)
+
+        for y in range(low_bound.y, high_bound.y):
+            for x in range(low_bound.x, high_bound.x):
+                loc = self[LatticePoint(x, y)].copy()
+                new_pos = LatticePoint(
+                    y, high_bound.x - 1 - x)
+                loc.x, loc.y = new_pos.x, new_pos.y
+                new_grid[new_pos] = loc
+        self.offset = newoffset
+        self.grid = new_grid.grid
+        return self
+
+    def rotate_180(self):
+        """Rotate the grid 180 degrees"""
+
+        low_bound, high_bound = self.bounds
+        newoffset = LatticePoint(
+            high_bound.x - 1, high_bound.y - 1)
+        new_grid: ExpandableGrid = ExpandableGrid.blank(
+            (self.width, self.height), newoffset)
+
+        for y in range(low_bound.y, high_bound.y):
+            for x in range(low_bound.x, high_bound.x):
+                loc = self[LatticePoint(x, y)].copy()
+                new_pos = LatticePoint(
+                    high_bound.x - 1 - x, high_bound.y - 1 - y)
                 loc.x, loc.y = new_pos.x, new_pos.y
                 new_grid[new_pos] = loc
         self.offset = newoffset
